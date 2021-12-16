@@ -291,6 +291,30 @@
           slot="items"
           slot-scope="props"
         >
+          <td>
+            <v-tooltip top>
+              {{ $t('WholeEnvironment') }}
+              <v-icon
+                v-if="onlyEnvironment(props.item)"
+                slot="activator"
+                color="red"
+                small
+              >
+                report_problem
+              </v-icon>
+            </v-tooltip>
+            <v-tooltip top>
+              {{ $t('AllOrigin') }}
+              <v-icon
+                v-if="onlyOrigin(props.item)"
+                slot="activator"
+                color="red"
+                small
+              >
+                report_problem
+              </v-icon>
+            </v-tooltip>
+          </td>
           <td
             v-if="$config.customer_views"
           >
@@ -469,6 +493,7 @@ export default {
     search: '',
     dialog: false,
     headers: [
+      { text: '', value: 'icons' },
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Environment'), value: 'environment' },
       { text: i18n.t('Service'), value: 'service' },
@@ -655,6 +680,19 @@ export default {
     toISODate(date, time) {
       return new Date(date + ' ' + time).toISOString()
     },
+    blackoutAttributes(blackout) {
+      const alertAttr = ['environment', 'service', 'resource', 'event', 'group', 'tags', 'origin']
+      return Object.entries(blackout)
+        .filter(([_, v]) => (!Array.isArray(v) && !!v) || (Array.isArray(v) && v.length))
+        .filter(b => alertAttr.includes(b[0]))
+        .reduce((a, [k, _]) => a.concat(k), [])
+    },
+    onlyEnvironment(blackout) {
+      return JSON.stringify(this.blackoutAttributes(blackout)) === JSON.stringify(['environment'])
+    },
+    onlyOrigin(blackout) {
+      return JSON.stringify(this.blackoutAttributes(blackout)) === JSON.stringify(['environment', 'origin'])
+    },
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
@@ -693,11 +731,11 @@ export default {
             customer: this.editedItem.customer,
             environment: this.editedItem.environment,
             service: this.editedItem.service,
-            resource: this.editedItem.resource,
-            event: this.editedItem.event,
-            group: this.editedItem.group,
+            resource: this.editedItem.resource ? this.editedItem.resource : null,
+            event: this.editedItem.event ? this.editedItem.event : null,
+            group: this.editedItem.group ? this.editedItem.group : null,
             tags: this.editedItem.tags,
-            origin: this.editItem.origin,
+            origin: this.editedItem.origin ? this.editedItem.origin : null,
             startTime: this.toISODate(
               this.editedItem.period.startDate,
               this.editedItem.period.startTime
