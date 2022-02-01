@@ -630,9 +630,10 @@ export default {
       return this.$store.getters.getPreference('textWidth')
     },
     textColor(severity) {
-      if (this.severityColor(severity) === 'black' || this.severityColor(severity) === '#000000') {
+      if (this.severityColor(severity) === 'black' || this.severityColor(severity) === '#D92829') {
         return 'white--text'
-      }
+      } 
+      
       return this.$store.getters.getConfig('colors').text
         ? `${this.$store.getters.getConfig('colors').text}--text`
         : ''

@@ -68,6 +68,7 @@
         <v-divider />
       </div>
     </v-expand-transition>
+    <span>Area testing text</span>
 
     <v-tabs
       v-model="currentTab"
