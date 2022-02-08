@@ -240,6 +240,7 @@ export default {
       return this.$store.getters['alerts/counts']
     },
     alertsByEnvironment() {
+      // console.log(this.alerts)
       return this.alerts.filter(alert =>
         this.filter.environment
           ? alert.environment === this.filter.environment

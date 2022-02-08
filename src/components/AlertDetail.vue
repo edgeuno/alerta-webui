@@ -1036,7 +1036,6 @@ export default {
   }
 }
 </script>
-
 <style>
 .label {
   font-size: 13px;

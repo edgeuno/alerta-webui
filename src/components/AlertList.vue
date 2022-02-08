@@ -20,8 +20,7 @@
         slot-scope="props"
       >
         <tr
-          :style="{ 'background-color': severityColor(props.item.severity) }"
-          class="hover-lighten"
+          :class="['hover-lighten', ...getSeverityRowClass(props.item)]"
           @click="selectItem(props.item)"
         >
           <td
@@ -610,6 +609,14 @@ export default {
     }
   },
   methods: {
+    getSeverityRowClass(item){
+      if (!item.severity) {
+        return ['not-defined']
+      }
+      return [item.severity]
+
+
+    },
     duration(item) {
       return moment.duration(moment().diff(moment(item.receiveTime)))
     },
@@ -702,6 +709,61 @@ export default {
   }
 }
 </script>
+
+<style >
+  tr.security{
+    background-color:#0288FF !important;
+  }
+
+  tr.critical{
+    background-color:#FF6557 !important;
+  }
+
+  tr.major{
+    background-color:#FFB350 !important;
+  }
+
+  tr.minor{
+    background-color:#FFFF50 !important;
+  }
+
+  tr.warning{
+    background-color:#5BBEFF !important;
+  }
+
+  tr.indeterminate{
+    background-color:#BCFCFF !important;
+  }
+
+  tr.cleared{
+    background-color:#35CC41 !important;
+  }
+
+  tr.normal{
+    background-color:#35CC41 !important;
+  }
+
+  tr.ok{
+    background-color:#35CC41 !important;
+  }
+
+  tr.informational{
+    background-color:#35CC41 !important;
+  }
+
+  tr.debug{
+    background-color:#FF62CF !important;
+  }
+
+  tr.trace{
+    background-color:#8A5EFF !important;
+  }
+
+  tr.unknown{
+    background-color:#C0C0C0 !important;
+  }
+</style>
+
 
 <style>
 .alert-table .v-table th, td {
