@@ -86,6 +86,13 @@
       <v-btn
         flat
         icon
+        @click="showSubGroup = !showSubGroup"
+      >
+        <v-icon>dashboard_customize</v-icon>
+      </v-btn>
+      <v-btn
+        flat
+        icon
         :class="{ 'filter-active': isActive }"
         @click="sidesheet = !sidesheet"
       >
@@ -189,6 +196,7 @@ export default {
   },
   data: () => ({
     currentTab: null,
+    showSubGroup:false,
     densityDialog: false,
     selectedId: null,
     selectedItem: {},
