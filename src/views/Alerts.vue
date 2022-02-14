@@ -68,7 +68,27 @@
         <v-divider />
       </div>
     </v-expand-transition>
-    <span>Area testing text</span>
+    <v-expand-transition>
+      <div 
+        v-show="showSubGroup"
+      >
+        <v-tabs
+          center-active
+        >
+          <v-toolbar-title 
+            class="pt-2"
+          >
+            Subgroups: 
+          </v-toolbar-title>
+          <v-tab 
+            v-for="group in subGroups"
+            :key="group"
+          >
+            {{ group }}
+          </v-tab>
+        </v-tabs>
+      </div>
+    </v-expand-transition>
 
     <v-tabs
       v-model="currentTab"
@@ -84,6 +104,13 @@
         {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
       </v-tab>
       <v-spacer />
+      <v-btn
+        flat
+        icon
+        @click="showSubGroup = !showSubGroup"
+      >
+        <v-icon>dashboard_customize</v-icon>
+      </v-btn>
       <v-btn
         flat
         icon
@@ -190,6 +217,7 @@ export default {
   },
   data: () => ({
     currentTab: null,
+    showSubGroup:false,
     densityDialog: false,
     selectedId: null,
     selectedItem: {},
@@ -230,6 +258,17 @@ export default {
         .filter(alert => alert.status == 'open')
         .reduce((acc, alert) => acc || !alert.repeat, false)
     },
+    subGroups() {
+      return ['ALL'].concat(this.$store.getters['alerts/groups'])
+    },
+    alertsBySubGroup() {
+      console.log(this.alerts)
+      return this.alerts.filter(alert =>
+        this.filter.group
+          ? alert.group === this.filter.group
+          : true
+      )
+    },
     showAllowedEnvs() {
       return this.$store.getters.getPreference('showAllowedEnvs')
     },
@@ -240,7 +279,6 @@ export default {
       return this.$store.getters['alerts/counts']
     },
     alertsByEnvironment() {
-      // console.log(this.alerts)
       return this.alerts.filter(alert =>
         this.filter.environment
           ? alert.environment === this.filter.environment

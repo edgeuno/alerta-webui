@@ -210,7 +210,7 @@
               subheader
             >
               <v-subheader>Actions</v-subheader>
-              <v-divider />
+              <v-divider class="my-2" />
               <v-list-tile
                 v-for="(action, i) in actions"
                 :key="i"
@@ -283,9 +283,465 @@
                 <i>{{ note.text }}</i>
               </v-alert>
               <!-- DEPRECATED -->
+              <v-container
+                fluid
+                grid-list-lg
+              >
+                <v-layout 
+                  row 
+                  wrap
+                >
+                  <v-flex 
+                    sm6 
+                    md4
+                  >
+                    <v-card>
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Overview
+                        </h3>
+                        <section
+                          class="my-2"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Severity') }}
+                          </h3>
+                          <div>
+                            <span :class="['label', 'label-' + item.previousSeverity]">
+                              {{ item.previousSeverity | capitalize }}
+                            </span>&nbsp;&rarr;&nbsp;
+                            <span :class="['label', 'label-' + item.severity]">
+                              {{ item.severity | capitalize }}
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                          class="my-2"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Service') }}
+                          </h3>
+                          <div
+                            v-for="service in item.service"
+                            :key="service"
+                            class="clickable"
+                            @click="queryBy('service', service)"
+                          >
+                            {{ service }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Text') }}
+                          </h3>
+                          <div
+                            class="alert-word-break"
+                            v-html="item.text"
+                          >
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                          class="my-2"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            External Link
+                          </h3>
+                          <div v-if="typeof item.attributes === 'object'" v-html=item.attributes.externalLink >
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                    <v-card class="mt-3">
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Case
+                        </h3>
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Status') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.status | capitalize }}
+                            </span>
+                            <span
+                              v-if="statusNote && statusNote.user"
+                            >&nbsp;{{ $t('by') }} <b>{{ statusNote.user }}</b> <br> ({{ statusNote.updateTime | timeago }})
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Timeout') }}
+                          </h3>
+                          <div>
+                            {{ item.timeout }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Event') }}
+                          </h3>
+                          <div
+                            class="clickable alert-word-break"
+                            @click="queryBy('event', item.event)"
+                          >
+                            {{ item.event }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Correlate') }}
+                          </h3>
+                          <div
+                            v-for="event in item.correlate"
+                            :key="event"
+                            class="clickable"
+                            @click="queryBy('event', event)"
+                          >
+                            {{ event }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                          v-if="statusNote && statusNote.user && statusNote.text"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            Notes
+                          </h3>
+                          <div class="alert-word-break">
+                            <v-icon small>
+                              error_outline
+                            </v-icon>
+                            <i>&nbsp;{{ statusNote.text }}</i>
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                  </v-flex>
+                  <v-flex 
+                    sm6 
+                    md4
+                  >
+                    <v-card>
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Duplication
+                        </h3>
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Type') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.type | splitCaps }}
+                            </span>
+                          </div>
+                        </section>
+                  
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('DuplicateCount') }}
+                          </h3>
+                          <div>
+                            <span>
+                              {{ item.duplicateCount }}
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Origin') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('origin', item.origin)"
+                          >
+                            {{ item.origin }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Repeat') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.repeat | capitalize }}
+                            </span>
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                    <v-card class="mt-3">
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Attributes
+                        </h3>
+                        <section
+                          v-for="(value, attr) in item.attributes"
+                          :key="attr"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ attr | splitCaps }}
+                          </h3>
+                          <div
+                            v-if="typeof value === 'object'"
+                          >
+                            <span
+                              v-for="v in value"
+                              :key="v"
+                              @click="queryBy(`_.${attr}`, v)"
+                            >
+                              <span class="clickable">{{ v }}</span>&nbsp;
+                            </span>
+                          </div>
+                          <div
+                            v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
+                            class="link-text"
+                            v-html="value"
+                          />
+                          <div
+                            v-else
+                            class="clickable"
+                            @click="queryBy(`_.${attr}`, value)"
+                          >
+                            {{ value }}
+                          </div>
+
+                          <v-divider class="my-2" />
+                        </section>
+
+                      </v-container>
+                     
+                    </v-card>
+                  </v-flex>
+                  <v-flex 
+                    sm6 
+                    md4
+                  >
+                    <v-card>
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Alert Details
+                        </h3>
+                        <section
+                          v-if="$config.customer_views"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('TrendIndication') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.trendIndication | splitCaps }}
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Value') }}
+                          </h3>
+                          <div>
+                            {{ item.value }}
+                          </div>
+                        </section>
+                        <section
+                          v-if="$config.customer_views"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Customer') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('customer', item.customer)"
+                          >
+                            {{ item.customer }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Environment') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('environment', item.environment)"
+                          >
+                            {{ item.environment }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Resource') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('resource', item.resource)"
+                          >
+                            {{ item.resource }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Group') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('group', item.group)"
+                          >
+                            {{ item.group }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Tags') }}
+                          </h3>
+                          <div>
+                            <v-chip
+                              v-for="tag in item.tags"
+                              :key="tag"
+                              label
+                              small
+                              @click="queryBy('tags', tag)"
+                            >
+                              <v-icon left>
+                                label
+                              </v-icon>{{ tag }}
+                            </v-chip>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('AlertId') }}
+                          </h3>
+                          <span class="console-text">{{ item.id }}</span>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('LastReceiveAlertId') }}
+                          </h3>
+                          <span class="console-text">{{ item.lastReceiveId }}</span>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('CreateTime') }}
+                          </h3>
+                          <div>
+                            <date-time
+                              v-if="item.createTime"
+                              :value="item.createTime"
+                              format="longDate"
+                            />
+                            ({{ item.createTime | timeago }})
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('ReceiveTime') }}
+                          </h3>
+                          <div>
+                            <date-time
+                              v-if="item.receiveTime"
+                              :value="item.receiveTime"
+                              format="longDate"
+                            />
+                            ({{ item.receiveTime | timeago }})
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('LastReceiveTime') }}
+                          </h3>
+                          <div>
+                            <date-time
+                              v-if="item.lastReceiveTime"
+                              :value="item.lastReceiveTime"
+                              format="longDate"
+                            />
+                            ({{ item.lastReceiveTime | timeago }})
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+              </v-container>
 
               <v-card-text>
-                <div class="flex xs12 ma-1">
+                
+
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -298,8 +754,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -312,8 +768,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -331,8 +787,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -350,8 +806,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -369,8 +825,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div
+                </div> -->
+                <!-- <div
                   v-if="$config.customer_views"
                   class="flex xs12 ma-1"
                 >
@@ -389,8 +845,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -409,8 +865,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -426,8 +882,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -443,8 +899,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -460,8 +916,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -480,8 +936,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -497,8 +953,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -516,9 +972,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
-                <div class="flex xs12 ma-1">
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -537,8 +993,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div
+                </div> -->
+                <!-- <div
                   v-if="statusNote && statusNote.user && statusNote.text"
                   class="flex xs12 ma-1"
                 >
@@ -555,8 +1011,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -569,8 +1025,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -583,8 +1039,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -599,8 +1055,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -613,8 +1069,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -629,8 +1085,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -643,8 +1099,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -659,8 +1115,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -676,8 +1132,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex xs12 ma-1">
+                </div> -->
+                <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
                       <div class="grey--text">
@@ -700,8 +1156,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div
+                </div> -->
+                <!-- <div
                   v-for="(value, attr) in item.attributes"
                   :key="attr"
                   class="flex xs12 ma-1"
@@ -736,9 +1192,10 @@
                       >
                         {{ value }}
                       </div>
+                      <span>here</span>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -900,6 +1357,7 @@ export default {
       return this.$store.getters.getPreference('isDark')
     },
     item() {
+      console.log(this.$store.state.alerts.alert)
       return this.$store.state.alerts.alert
     },
     actions() {
@@ -1110,5 +1568,9 @@ div.clickable:hover, span.clickable:hover, div.link-text a:hover {
 
 #alerta .v-chip__content {
   cursor: pointer;
+}
+
+.alert-word-break{
+  word-break: break-all;
 }
 </style>
