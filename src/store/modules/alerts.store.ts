@@ -15,6 +15,7 @@ const state = {
   services: [],
   groups: [],
   tags: [],
+  subgroups: [], // NEW CUSTOM SUBGROUP
 
   alert: {},
   notes: [],
@@ -35,7 +36,8 @@ const state = {
     customer: null,
     service: null,
     group: null,
-    dateRange: [null, null]
+    dateRange: [null, null],
+    subgroup: null
   },
 
   pagination: {
@@ -86,6 +88,9 @@ const mutations = {
   },
   SET_GROUPS(state, groups): any {
     state.groups = groups
+  },
+  SET_SUBGROUPS(state, subGroups): any {
+    state.subGroups = subGroups
   },
   SET_TAGS(state, tags): any {
     state.tags = tags
@@ -161,7 +166,6 @@ const actions = {
         moment().utc().add(state.filter.dateRange[1], 'seconds').toISOString() // seconds offset
       )
     }
-
     return AlertsApi.getAlerts(params)
       .then(({alerts, total, pageSize}) => commit('SET_ALERTS', [alerts, total, pageSize]))
       .catch(() => commit('RESET_LOADING'))
@@ -271,6 +275,10 @@ const actions = {
   getGroups({commit}) {
     return AlertsApi.getGroups({}).then(({groups}) => commit('SET_GROUPS', groups))
   },
+  async getSubgroups({commit}) {
+    const subGroups = await AlertsApi.getGroups({})
+    commit('SET_SUBGROUPS', subGroups)
+  },
   getTags({commit}) {
     return AlertsApi.getTags({}).then(({tags}) => commit('SET_TAGS', tags))
   },
@@ -331,6 +339,9 @@ const getters = {
   groups: state => {
     return state.groups.map(g => g.group).sort()
   },
+  subgroups: state => {
+    return state.groups.map(g => g.group).sort() // CUSTOM SUBGROUP: Change this when subgroups data is enabled
+  },
   tags: state => {
     return state.tags.map(t => t.tag).sort()
   },
@@ -341,6 +352,17 @@ const getters = {
     let paginationHash = `sb:${sortBy};sd:${descending}`
     let asiHash = `asi:${state.showPanel ? 1 : 0}`
     return `#${filterHash};${paginationHash};${asiHash}`
+  },
+  filteredAlerts: state => {
+    let result = state.alerts
+    if (state.filter.environment) {
+      result = result.filter(alert => alert.environment == state.filter.environment)
+    }
+    if (state.filter.subgroup && state.filter.subgroup !== 'ALL') {
+      result = result.filter(alert => alert.group == state.filter.subgroup)
+      console.log(result)
+    }
+    return result
   }
 }
 

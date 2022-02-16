@@ -81,10 +81,11 @@
             Subgroups: 
           </v-toolbar-title>
           <v-tab 
-            v-for="group in subGroups"
-            :key="group"
+            v-for="(subGroup, i) in subGroups"
+            :key="i+subGroup"
+            @click="setSubGroup(subGroup)"
           >
-            {{ group }}
+            {{ subGroup }}
           </v-tab>
         </v-tabs>
       </div>
@@ -147,7 +148,7 @@
             {{ $t('DisplayDensity') }}
           </v-list-tile>
           <v-list-tile
-            @click="toCsv(alertsByEnvironment)"
+            @click="toCsv(filteredAlerts)"
           >
             {{ $t('DownloadAsCsv') }}
           </v-list-tile>
@@ -169,7 +170,7 @@
           <keep-alive max="1">
             <alert-list
               v-if="env == filter.environment || env == 'ALL'"
-              :alerts="alertsByEnvironment"
+              :alerts="filteredAlerts"
               @set-alert="setAlert"
             />
           </keep-alive>
@@ -191,6 +192,7 @@ import moment from 'moment'
 import { ExportToCsv } from 'export-to-csv'
 import utils from '@/common/utils'
 import i18n from '@/plugins/i18n'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -225,6 +227,9 @@ export default {
     timer: null
   }),
   computed: {
+    filteredAlerts() {
+      return this.$store.getters['alerts/filteredAlerts']
+    },
     audioURL() {
       return this.$config.audio.new || this.$store.getters.getPreference('audioURL')
     },
@@ -261,14 +266,6 @@ export default {
     subGroups() {
       return ['ALL'].concat(this.$store.getters['alerts/groups'])
     },
-    alertsBySubGroup() {
-      console.log(this.alerts)
-      return this.alerts.filter(alert =>
-        this.filter.group
-          ? alert.group === this.filter.group
-          : true
-      )
-    },
     showAllowedEnvs() {
       return this.$store.getters.getPreference('showAllowedEnvs')
     },
@@ -277,13 +274,6 @@ export default {
     },
     environmentCounts() {
       return this.$store.getters['alerts/counts']
-    },
-    alertsByEnvironment() {
-      return this.alerts.filter(alert =>
-        this.filter.environment
-          ? alert.environment === this.filter.environment
-          : true
-      )
     },
     refreshInterval() {
       return (
@@ -375,6 +365,7 @@ export default {
     this.setKiosk(this.isKiosk)
     this.cancelTimer()
     this.refreshAlerts()
+    this.getSubgroups()
   },
   beforeDestroy() {
     this.cancelTimer()
@@ -418,10 +409,14 @@ export default {
     playSound() {
       !this.isMute && this.$refs.audio.play()
     },
+    ...mapActions('alerts', ['getSubgroups', 'setFilter']),
     setEnv(env) {
       this.$store.dispatch('alerts/setFilter', {
         environment: env === 'ALL' ? null : env
       })
+    },
+    setSubGroup(subgroup) {
+      this.setFilter({subgroup})
     },
     setAlert(item) {
       this.$router.push({ path: `/alert/${item.id}` })
