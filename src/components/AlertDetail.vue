@@ -9,224 +9,269 @@
       <v-toolbar
         :color="isDark ? '#616161' : '#eeeeee'"
         dense
+        class="flex flex-row justify-between"
       >
-        <v-btn
-          icon
-          @click="dialog = false"
-        >
-          <v-icon>arrow_back</v-icon>
-        </v-btn>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            :disabled="!isAcked(item.status) && !isClosed(item.status)"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="takeAction(item.id, 'open')"
-          >
-            <v-icon
-              size="20px"
-            >
-              refresh
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Open') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="!isWatched(item.tags)"
-            slot="activator"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="watchAlert(item.id)"
-          >
-            <v-icon
-              size="20px"
-            >
-              visibility
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Watch') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isWatched(item.tags)"
-            slot="activator"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="unwatchAlert(item.id)"
-          >
-            <v-icon
-              size="20px"
-            >
-              visibility_off
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Unwatch') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="!isAcked(item.status)"
-            slot="activator"
-            :disabled="!isOpen(item.status)"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="ackAlert(item.id)"
-          >
-            <v-icon
-              size="20px"
-            >
-              check
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Ack') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isAcked(item.status)"
-            slot="activator"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="takeAction(item.id, 'unack')"
-          >
-            <v-icon
-              size="20px"
-            >
-              undo
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Unack') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="!isShelved(item.status)"
-            slot="activator"
-            :disabled="!isOpen(item.status) && !isAcked(item.status)"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="shelveAlert(item.id)"
-          >
-            <v-icon
-              size="20px"
-            >
-              schedule
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Shelve') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isShelved(item.status)"
-            slot="activator"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="takeAction(item.id, 'unshelve')"
-          >
-            <v-icon
-              size="20px"
-            >
-              restore
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Unshelve') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            :disabled="isClosed(item.status)"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="takeAction(item.id, 'close')"
-          >
-            <v-icon
-              size="20px"
-            >
-              highlight_off
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Close') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="deleteAlert(item.id)"
-          >
-            <v-icon
-              size="20px"
-            >
-              delete
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Delete') }}</span>
-        </v-tooltip>
-
-        <v-tooltip
-          :key="copyIconText"
-          bottom
-        >
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain px-1 mx-0"
-            @click="clipboardCopy(JSON.stringify(item, null, 4))"
-          >
-            <v-icon
-              size="20px"
-            >
-              content_copy
-            </v-icon>
-          </v-btn>
-          <span>{{ copyIconText }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-menu
-            slot="activator"
-            bottom
-            left
-          >
-            <v-btn
-              slot="activator"
-              icon
-              class="btn--plain px-1 mx-0"
-            >
-              <v-icon>
-                more_vert
-              </v-icon>
-            </v-btn>
-
-            <v-list
-              subheader
-            >
-              <v-subheader>Actions</v-subheader>
-              <v-divider />
-              <v-list-tile
-                v-for="(action, i) in actions"
-                :key="i"
-                @click="takeAction(item.id, action)"
+        <v-layout row>
+          <v-flex grow pa-1>
+            <v-card color="transparent" elevation="0">
+              <v-btn
+                icon
+                @click="dialog = false"
               >
-                <v-list-tile-title>{{ action | splitCaps }}</v-list-tile-title>
-              </v-list-tile>
-            </v-list>
-          </v-menu>
-          <span>{{ $t('More') }}</span>
-        </v-tooltip>
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  slot="activator"
+                  :disabled="!isAcked(item.status) && !isClosed(item.status)"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="takeAction(item.id, 'open')"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    refresh
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Open') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  v-show="!isWatched(item.tags)"
+                  slot="activator"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="watchAlert(item.id)"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    visibility
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Watch') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  v-show="isWatched(item.tags)"
+                  slot="activator"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="unwatchAlert(item.id)"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    visibility_off
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Unwatch') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  v-show="!isAcked(item.status)"
+                  slot="activator"
+                  :disabled="!isOpen(item.status)"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="beforeAckAlert(item.id)"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    check
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Ack') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  v-show="isAcked(item.status)"
+                  slot="activator"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="takeAction(item.id, 'unack')"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    undo
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Unack') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  v-show="!isShelved(item.status)"
+                  slot="activator"
+                  :disabled="!isOpen(item.status) && !isAcked(item.status)"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="shelveAlert(item.id)"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    schedule
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Shelve') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  v-show="isShelved(item.status)"
+                  slot="activator"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="takeAction(item.id, 'unshelve')"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    restore
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Unshelve') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  slot="activator"
+                  :disabled="isClosed(item.status)"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="takeAction(item.id, 'close')"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    highlight_off
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Close') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-btn
+                  slot="activator"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="deleteAlert(item.id)"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    delete
+                  </v-icon>
+                </v-btn>
+                <span>{{ $t('Delete') }}</span>
+              </v-tooltip>
+      
+              <v-tooltip
+                :key="copyIconText"
+                bottom
+              >
+                <v-btn
+                  slot="activator"
+                  icon
+                  class="btn--plain px-1 mx-0"
+                  @click="clipboardCopy(JSON.stringify(item, null, 4))"
+                >
+                  <v-icon
+                    size="20px"
+                  >
+                    content_copy
+                  </v-icon>
+                </v-btn>
+                <span>{{ copyIconText }}</span>
+              </v-tooltip>
+      
+              <v-tooltip bottom>
+                <v-menu
+                  slot="activator"
+                  bottom
+                  left
+                >
+                  <v-btn
+                    slot="activator"
+                    icon
+                    class="btn--plain px-1 mx-0"
+                  >
+                    <v-icon>
+                      more_vert
+                    </v-icon>
+                  </v-btn>
+      
+                  <v-list
+                    subheader
+                  >
+                    <v-subheader>Actions</v-subheader>
+                    <v-divider />
+                    <v-list-tile
+                      v-for="(action, i) in actions"
+                      :key="i"
+                      @click="takeAction(item.id, action)"
+                    >
+                      <v-list-tile-title>{{ action | splitCaps }}</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
+                <span>{{ $t('More') }}</span>
+              </v-tooltip>
+            </v-card>
+          </v-flex>
+          
+          <v-flex shrink pa-1>
+            <v-tooltip bottom>
+              <v-btn
+                slot="activator"
+                icon
+                :disabled="!hasHistoryNotes"
+                class="btn--plain px-1 mx-0"
+                @click="displayNotes(true)"
+              >
+                <v-badge :color="isDark ? '#616161' : '#eeeeee'" left>
+                  <template v-slot:badge>
+                    <span>{{ hasHistoryNotes }}</span>
+                  </template>
+                  <v-icon
+                    size="20px"
+                    style="width: 20px"
+                  >
+                    book_open_outline
+                  </v-icon>
+                </v-badge>
+              </v-btn>
+              <span>View notes</span>
+            </v-tooltip>
+          </v-flex>
+        </v-layout>
       </v-toolbar>
 
       <v-card
         flat
       >
+        <alert-actions
+          v-if="item.id"
+          :id="item.id"
+          :status="item.status"
+          :is-watched="isWatched(item.tags)"
+          @take-action="takeAction"
+          @ack-alert="ackAlert"
+          @shelve-alert="shelveAlert"
+          @watch-alert="watchAlert"
+          @unwatch-alert="unwatchAlert"
+          @add-note="toggleNoteDialog(true)"
+          @delete-alert="deleteAlert"
+        />
         <v-tabs
           v-model="active"
           grow
@@ -241,7 +286,7 @@
             <v-card
               flat
             >
-              <v-alert
+              <!-- <v-alert
                 v-for="note in notes"
                 :key="note.id"
                 :value="true"
@@ -264,10 +309,10 @@
                   /></b> ({{ note.createTime | timeago }})<br>
                 </span>
                 <i>{{ note.text }}</i>
-              </v-alert>
+              </v-alert> -->
 
               <!-- DEPRECATED -->
-              <v-alert
+              <!-- <v-alert
                 v-for="note in historyNotes"
                 :key="note.index"
                 type="info"
@@ -281,7 +326,7 @@
                   format="longDate"
                 /></b> ({{ note.updateTime | timeago }})<br>
                 <i>{{ note.text }}</i>
-              </v-alert>
+              </v-alert> -->
               <!-- DEPRECATED -->
 
               <v-card-text>
@@ -836,20 +881,6 @@
           </v-tab-item>
         </v-tabs>
       </v-card>
-
-      <alert-actions
-        v-if="item.id"
-        :id="item.id"
-        :status="item.status"
-        :is-watched="isWatched(item.tags)"
-        @take-action="takeAction"
-        @ack-alert="ackAlert"
-        @shelve-alert="shelveAlert"
-        @watch-alert="watchAlert"
-        @unwatch-alert="unwatchAlert"
-        @add-note="addNote"
-        @delete-alert="deleteAlert"
-      />
     </v-card>
   </v-card>
 </template>
@@ -857,13 +888,13 @@
 <script>
 import debounce from 'lodash/debounce'
 import DateTime from './lib/DateTime'
-import AlertActions from '@/components/AlertActions'
 import i18n from '@/plugins/i18n'
+import AlertActions from '@/components/AlertActions'
 
 export default {
   components: {
     DateTime,
-    AlertActions
+    AlertActions,
   },
   props: {
     id: {
@@ -917,6 +948,9 @@ export default {
     historyNotes() {
       return this.history
         .filter(h => h.type == 'note' && h.id == this.id)  // get notes from alert history
+    },
+    hasHistoryNotes() {
+      return this.$store.state.alerts.notes.length
     },
     statusNote() {
       return this.history.filter(h => h.type != 'note' && h.status == this.item.status).pop()
@@ -980,6 +1014,14 @@ export default {
     deleteNote(alertId, noteId) {
       this.$store.dispatch('alerts/deleteNote', [alertId, noteId])
     },
+    displayNotes(bool) {
+      this.$store.dispatch('alerts/displayNotes', bool)
+    },
+    beforeAckAlert(id) {
+      alert('Before ack this alert, you should add note explaining why :)')
+      this.toggleNoteDialog(true)
+      this.$store.commit('alerts/SET_NOTE_BEFORE_ACK', true)
+    },
     takeAction: debounce(function(id, action, text) {
       this.$store
         .dispatch('alerts/takeAction', [id, action, text])
@@ -1005,10 +1047,8 @@ export default {
         .dispatch('alerts/unwatchAlert', id)
         .then(() => this.getAlert(this.id))
     }, 200, {leading: true, trailing: false}),
-    addNote: debounce(function(id, text) {
-      this.$store
-        .dispatch('alerts/addNote', [id, text])
-        .then(() => this.getNotes(this.id))
+    toggleNoteDialog: debounce(function(bool) {
+      this.$store.dispatch('alerts/toggleNoteDialog', bool)
     }, 200, {leading: true, trailing: false}),
     deleteAlert: debounce(function(id) {
       confirm(i18n.t('ConfirmDelete')) &&

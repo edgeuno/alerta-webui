@@ -262,15 +262,19 @@
         :color="isDark ? '#8e8e8e' : '#bcbcbc'"
         class="mb-1"
       >
-        <v-btn
-          icon
-          @click="clearSelected"
-        >
-          <v-icon>arrow_back</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <v-btn
+            slot="activator"
+            icon
+            @click="clearSelected"
+          >
+            <v-icon>close</v-icon>
+          </v-btn>
+          <span>{{ $t('Cancel') }}</span>
+        </v-tooltip>
         <span class="hidden-sm-and-down">
           <v-toolbar-title>
-            Back
+            Bulk actions:
           </v-toolbar-title>
         </span>
         <v-spacer />
@@ -300,7 +304,7 @@
             slot="activator"
             icon
             class="btn--plain"
-            @click="bulkAckAlert()"
+            @click="bulkAckAlert(null)"
           >
             <v-icon>
               check
@@ -495,6 +499,17 @@
         </v-btn>
       </span>
     </div>
+
+    <alert-add-note-dialog
+      :id="currentAlertId"
+      :is-visible="isNoteDialog"
+      :status="currentAlertStatus"
+      :is-watched="isWatched(currentAlertTags)"
+      :value="isAcking ? 'ack' : 'note'"
+      @close="toggleNoteDialog(false); $store.commit('alerts/SET_NOTE_BEFORE_ACK', false)"
+      @add-note="addAlertNote"
+    />
+    <notes-dialog @delete-note="handleDeleteNote" />
   </v-app>
 </template>
 
@@ -502,7 +517,8 @@
 import Banner from '@/components/lib/Banner.vue'
 import ProfileMe from '@/components/auth/ProfileMe.vue'
 import Snackbar from '@/components/lib/Snackbar.vue'
-
+import AlertAddNote from '@/components/AlertAddNote'
+import NotesDialog from '@/components/NotesDialog'
 import i18n from '@/plugins/i18n'
 
 export default {
@@ -510,7 +526,9 @@ export default {
   components: {
     Banner,
     ProfileMe,
-    Snackbar
+    Snackbar,
+    NotesDialog,
+    AlertAddNoteDialog: AlertAddNote
   },
   props: [],
   data: () => ({
@@ -631,6 +649,18 @@ export default {
         }
       ]
     },
+    isAcking() {
+      return this.$store.state.alerts.isAddNoteBeforeAck
+    },
+    currentAlertId() {
+      return this.$store.state.alerts.alert.id || ''
+    },
+    currentAlertTags() {
+      return this.$store.state.alerts.alert.tags || []
+    },
+    currentAlertStatus() {
+      return this.$store.state.alerts.alert.status || ''
+    },
     isDark() {
       return this.$store.getters.getPreference('isDark')
     },
@@ -654,6 +684,14 @@ export default {
     },
     isSignupEnabled() {
       return this.$config.signup_enabled
+    },
+    isNoteDialog: {
+      get() {
+        return this.$store.state.alerts.isNoteDialog
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/toggleNoteDialog', bool)
+      }
     },
     profile() {
       return this.$store.state.auth.payload || {}
@@ -715,6 +753,9 @@ export default {
     }
   },
   methods: {
+    addAlertNote(data) {
+      this.selected.length ? this.bulkAckAlert(data) : this.addSingleNote(data)
+    },
     submitSearch(query) {
       this.$store.dispatch('alerts/updateQuery', { q: query })
       this.$router.push({
@@ -752,17 +793,53 @@ export default {
         this.$store.dispatch('alerts/getAlerts')
       })
     },
-    bulkAckAlert() {
-      this.selected.map(a => {
-        this.$store
-          .dispatch('alerts/takeAction', [
-            a.id,
-            'ack',
-            '',
-            this.ackTimeout
-          ])
+    addSingleNote({ note, action, id }) {
+      try {
+        this.$store.dispatch('alerts/addNote', [id, note]).then(() => {
+          this.$store.dispatch(
+            'notifications/success',
+            'Note added correctly!',
+            { root: true }
+          )
+        })
+        if (this.$store.state.alerts.isAddNoteBeforeAck) {
+          this.$store
+            .dispatch('alerts/takeAction', [id, action, note]).then(() => {
+              this.$store.dispatch(
+                'notifications/success',
+                'Note added correctly!',
+                { root: true }
+              )
+            })
+        }
+      } finally {
+        this.$nextTick(() =>  {
+          setTimeout(() => {
+            this.getNotes(id)
+          }, 200)
+        })
+      }
+    },
+    handleDeleteNote(noteId) {
+      this.$store.dispatch('alerts/deleteNote', [this.currentAlertId, noteId])
+    },
+    getNotes(id) {
+      this.$store.dispatch('alerts/getNotes', id)
+    },
+    toggleNoteDialog(bool) {
+      this.isNoteDialog = bool
+    },
+    bulkAckAlert(note) {
+      if (!note) {
+        alert('To bulk ack this alerts you need to first add a note :)')
+        this.toggleNoteDialog(true)
+        return
+      }
+      
+      this.$store.dispatch('alerts/addBulkNotes', [this.selected, note]).then(() => {
+        this.clearSelected()
+        this.$store.dispatch('alerts/getAlerts')
       })
-        .reduce(() => this.clearSelected())
     },
     bulkShelveAlert() {
       Promise.all(this.selected.map(a => {

@@ -28,8 +28,8 @@
             class="text-no-wrap"
             :style="fontStyle"
           >
+            <!-- v-if="selectableRows" -->
             <v-checkbox
-              v-if="selectableRows"
               v-model="props.selected"
               primary
               hide-details
@@ -39,7 +39,7 @@
               :size="fontSize"
               @click.stop
             />
-            <v-icon
+            <!-- <v-icon
               v-else-if="props.item.trendIndication == 'moreSevere'"
               :class="['trend-arrow', textColor(props.item.severity)]"
               :size="fontSize"
@@ -62,7 +62,7 @@
               @click.stop="multiselect = true; props.selected = true"
             >
               remove
-            </v-icon>
+            </v-icon> -->
           </td>
           <td
             v-for="col in $config.columns"

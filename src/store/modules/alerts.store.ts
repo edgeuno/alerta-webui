@@ -23,6 +23,9 @@ const state = {
   isWatch: false,
   isKiosk: false,
   showPanel: false,
+  isNoteDialog: false,
+  isDisplayNotes: false,
+  isAddNoteBeforeAck: false,
   displayDensity: 'comfortable', // 'comfortable' or 'compact'
 
   // query, filter and pagination
@@ -101,6 +104,15 @@ const mutations = {
   },
   SET_PANEL(state, panel) {
     state.showPanel = panel
+  },
+  TOGGLE_NOTE_DIALOG(state, bool) {
+    state.isNoteDialog = bool
+  },
+  SET_NOTE_BEFORE_ACK(state, bool) {
+    state.isAddNoteBeforeAck = bool
+  },
+  DISPLAY_NOTES(state, bool) {
+    state.isDisplayNotes = bool
   }
 }
 
@@ -176,6 +188,10 @@ const actions = {
     commit('SET_SELECTED', selected)
   },
 
+  toggleNoteDialog({ commit }, bool) {
+    commit('TOGGLE_NOTE_DIALOG', bool)
+  },
+
   getAlert({commit}, alertId) {
     return AlertsApi.getAlert(alertId).then(({alert}) => {
       commit('SET_ALERT', alert)
@@ -205,10 +221,26 @@ const actions = {
   untagAlert({commit, dispatch}, [alertId, tags]) {
     return AlertsApi.untagAlert(alertId, tags)
   },
-
+  displayNotes({ commit }, bool) {
+    commit('DISPLAY_NOTES', bool)
+  },
+  async addBulkNotes({dispatch}, [alerts, text]) {
+    try {
+      for await (let alert of alerts) {
+        dispatch('alerts/addNote', [alert.id, text])
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      dispatch('getAlerts')
+    }
+  },
+  setIsAddingNoteBeforeAck({ commit }, bool) {
+    commit('SET_NOTE_BEFORE_ACK', bool)
+  },
   addNote({commit, dispatch}, [alertId, text]) {
     return AlertsApi.addNote(alertId, {
-      text: text
+      text,
     }).then(response => dispatch('getAlerts'))
   },
   getNotes({commit}, alertId) {
