@@ -2,7 +2,7 @@
   <div>
     <v-container
       v-if="!showForm"
-      class="pa-1"
+      class="pa-1 py-2"
       fluid
     >
       <v-layout>
@@ -10,7 +10,7 @@
           <v-btn
             v-show="!isWatched"
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="watchAlert"
           >
             <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
@@ -19,24 +19,23 @@
           <v-btn
             v-show="isWatched"
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="unwatchAlert"
           >
             <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
           </v-btn>
 
           <v-btn
-            v-if="!showForm"
             outline
-            color="grey darken-2"
-            @click="showForm = true"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+            @click="$emit('add-note')"
           >
             <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
           </v-btn>
 
           <v-btn
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="deleteAlert"
           >
             <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
@@ -46,7 +45,7 @@
     </v-container>
 
 
-    <v-container
+    <!-- <v-container
       v-if="showForm"
       class="pa-1"
       fluid
@@ -154,7 +153,7 @@
           </v-form>
         </v-flex>
       </v-layout>
-    </v-container>
+    </v-container> -->
   </div>
 </template>
 

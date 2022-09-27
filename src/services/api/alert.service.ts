@@ -4,6 +4,13 @@ import axios from 'axios'
 let queryInProgress
 
 export default {
+  addAlert({ attributes, ...data }) {
+    return api.post('/alert', {...data, attributes: {} } , {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  },
   getAlert(alertId: string) {
     return api.get(`/alert/${alertId}`)
   },

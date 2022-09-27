@@ -105,6 +105,9 @@ const mutations = {
 }
 
 const actions = {
+  addAlert({ dispatch }, data) {
+    return AlertsApi.addAlert(data).then(_ => dispatch('getAlerts'))
+  },
   getAlerts({rootGetters, commit, state}) {
     commit('SET_LOADING')
     // get "lucene" query params (?q=)
