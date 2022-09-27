@@ -26,7 +26,7 @@
                   Added a note ({{ item.createTime | timeago }}):
                 </v-list-tile-title>
                 <v-list-tile-sub-title>
-                  <span class="heading">{{item.text}}</span>
+                  <span class="heading">{{ item.text }}</span>
                 </v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
@@ -51,7 +51,12 @@
             </div>
           </template>
         </v-list>
-        <v-btn block color="green darken-1" flat="flat" @click="close">
+        <v-btn 
+          color="green darken-1"
+          flat="flat"
+          block
+          @click="close"
+        >
           {{ $t('Close') }}
         </v-btn>
       </v-card-text>
