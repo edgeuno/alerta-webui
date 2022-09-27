@@ -10,7 +10,7 @@
           <v-btn
             v-show="!isWatched"
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="watchAlert"
           >
             <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
@@ -19,7 +19,7 @@
           <v-btn
             v-show="isWatched"
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="unwatchAlert"
           >
             <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
@@ -27,7 +27,7 @@
 
           <v-btn
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="$emit('add-note')"
           >
             <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
@@ -35,7 +35,7 @@
 
           <v-btn
             outline
-            color="grey darken-2"
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
             @click="deleteAlert"
           >
             <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
