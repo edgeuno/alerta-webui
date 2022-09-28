@@ -40,7 +40,7 @@
             @input="handleChange('resource', $event)"
           />
         </v-flex>
-        <v-flex xs12>
+        <v-flex xs6>
           <v-text-field
             :value="data.event"
             :rules="formRules.event"
@@ -51,9 +51,23 @@
             @input="handleChange('event', $event)"
           />
         </v-flex>
+        <v-flex xs6>
+          <v-select
+            :value="data.customer"
+            :items="customersAvailable"
+            :rules="formRules.customer"
+            label="Customer"
+            name="customer"
+            item-value="customer"
+            item-text="customer"
+            autofocus
+            required
+            box
+            @input="handleChange('customer', $event)"
+          />
+        </v-flex>
         <v-flex
-          xs6
-          md12
+          xs12
         >
           <v-select
             :value="data.environment"
@@ -120,8 +134,14 @@ export default {
         ],
         event: [
           v => !!v || 'Event is required'
+        ],
+        customer: [
+          v => !!v || 'Customer is required'
         ]
       }
+    },
+    customersAvailable() {
+      return this.$store.state.customers.customers
     },
     severityAvailable() {
       return [
@@ -180,7 +200,7 @@ export default {
       ]
     },
     environmentsAvailable() {
-      return ['ALL'].concat(this.$store.getters['alerts/environments'](this.showAllowedEnvs))
+      return this.$store.getters['alerts/environments'](this.showAllowedEnvs)
     }
   },
   methods: {

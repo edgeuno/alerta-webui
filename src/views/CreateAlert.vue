@@ -13,7 +13,11 @@
         </h3>
       </v-card-title>
 
-      <create-alert-stepper @create-alert="handleCreateAlert" />
+      <create-alert-stepper
+        ref="steps"
+        :loading="isCreatingAlert"
+        @create-alert="handleCreateAlert"
+      />
       <v-progress-linear
         v-if="isCreatingAlert"
         style="margin: 0;"
@@ -40,11 +44,15 @@ export default {
   },
   mounted() {
     Promise.all([
+      this.getCustomers(),
       this.getGroups(),
       this.getTags()
     ])
   },
   methods: {
+    getCustomers() {
+      this.$store.dispatch('customers/getCustomers')
+    },
     getTags() {
       this.$store.dispatch('alerts/getTags')
     },
@@ -60,12 +68,10 @@ export default {
             'Alert created successfully!',
             { root: true }
           )
+          this.$refs.steps.reset()
         })
-      } catch(err) {
-        console.error(err, 'catched error 65 ')
-      } 
-      finally {
-        this.isCreatingAlert = true
+      } finally {
+        this.isCreatingAlert = false
       }
     }
   }

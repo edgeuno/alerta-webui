@@ -48,7 +48,7 @@
 
     <v-stepper-content step="3">
       <step-three
-        :disabled="isSendingInfo"
+        :disabled="loading"
         :data="form.stepThree"
         @save="validateForms"
         @previous="handlePreviousStep"
@@ -65,13 +65,19 @@ export default {
     StepTwo: () => import('@/components/CreateAlertSteps/StepTwo'),
     StepThree: () => import('@/components/CreateAlertSteps/StepThree'),
   },
+  props: {
+    loading: {
+      type: Boolean,
+      default: () => false
+    }
+  },
   data: () => ({
-    isSendingInfo: false,
     currentStep: 1,
     form: {
       stepOne: {
         correlate: [],
         origin: 'curl',
+        customer: '',
         text: 'Testing alert creation from Alerta UI',
         event: 'Testing alert creation from Alerta UI',
         severity: 'major', 
@@ -90,16 +96,7 @@ export default {
       }
     },
   }),
-  mounted() {
-    this.$on('create-alert', this.toggleLoading)
-  },
-  beforeDestroy() {
-    this.$off('create-alert', this.toggleLoading)
-  },
   methods: {
-    toggleLoading() {
-      this.isSendingInfo = !this.isSendingInfo
-    },
     validateForms() {
       const isValid = this.$refs.stepOne.validate()
       this.$emit('create-alert', this.form)
@@ -115,6 +112,32 @@ export default {
     },
     handlePreviousStep() {
       this.currentStep -= 1
+    },
+    reset() {
+      this.form = {
+        stepOne: {
+          correlate: [],
+          origin: 'curl',
+          customer: '',
+          text: '',
+          event: '',
+          severity: '', 
+          resource: '',
+          environment: '',
+        },
+        stepTwo: {
+          type: '',
+          group: '',
+          status: 'open',
+        },
+        stepThree: {
+          tags: [],
+          timeout: 0,
+          attributes: ''
+        }
+      }
+      this.$refs.stepOne.$refs.form.resetValidation()
+      this.currentStep = 1
     }
   }
 }
