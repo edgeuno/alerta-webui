@@ -92,7 +92,7 @@ export default {
       stepThree: {
         tags: [],
         timeout: 0,
-        attributes: ''
+        attributes: []
       }
     },
   }),

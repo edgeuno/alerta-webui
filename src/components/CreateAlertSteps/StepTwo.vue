@@ -21,7 +21,6 @@
             label="Groups"
             name="groups"
             autofocus
-            required
             box
             @input="handleChange('groups', $event)"
           />
@@ -31,7 +30,6 @@
             v-model="data.type"
             label="Type"
             name="type"
-            required
             box
           />
         </v-flex>
@@ -44,7 +42,6 @@
             label="Status"
             name="status"
             autofocus
-            required
             box
             @input="handleChange('status', $event)"
           />

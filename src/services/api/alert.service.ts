@@ -4,12 +4,25 @@ import axios from 'axios'
 let queryInProgress
 
 export default {
-  addAlert({ attributes, ...data }) {
-    return api.post('/alert', {...data, attributes: {} } , {
-      headers: {
-        'Content-Type': 'application/json'
+  addAlert(data) {
+    return api.post(
+      '/alert',
+      {
+        ...data,
+        attributes: data.attributes.reduce((previousValue, currentValue) => {
+          let splittedItem: string[] = currentValue.split(':')
+          let key: string = splittedItem[0]
+          let value: string = splittedItem[1].replace(':', '')
+
+          return {...previousValue, [key]: value}
+        }, {})
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   },
   getAlert(alertId: string) {
     return api.get(`/alert/${alertId}`)

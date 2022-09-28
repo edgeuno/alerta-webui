@@ -24,7 +24,6 @@
             label="Tags"
             name="tags"
             autofocus
-            required
             box
             @input="handleChange('tags', $event)"
           >
@@ -46,23 +45,42 @@
             suffix="ms"
             label="timeout"
             name="timeout"
-            required
             hide-details
             single-line
             box
             @input="handleChange('timeout', validateTimeout($event))"
           />
-          <!-- @input="handleChange('timeout', $event)" -->
         </v-flex>
         <v-flex xs12>
-          <v-text-field
-            :value="data.attributes"
-            label="Attributes"
+          <v-combobox
+            id="attributes-input"
+            :value="attribute"
             name="attributes"
-            required
+            label="Attributes"
+            :items="[]"
+            persistent-hint
+            deletable-chips
+            multiple
+            hide-no-data
+            clearable
+            hint="Attributes are created with the following structure => Name: value - If you failed to input the correct format this can result in incorrect data being set as an attribute of this alert."
+            small-chips
+            chips
             box
             @input="handleChange('attributes', $event)"
-          />
+          >
+            <template v-slot:item="{ index, item }">
+              <v-list-tile-content>
+                <v-chip
+                  dark
+                  label
+                  small
+                >
+                  {{ item }}
+                </v-chip>
+              </v-list-tile-content>
+            </template>
+          </v-combobox>
         </v-flex>
       </v-layout>
     </v-form>
@@ -95,6 +113,7 @@ export default {
   },
   data: () => ({
     isValid: false,
+    attribute: '',
   }),
   computed: {
     tagsAvailable() {
