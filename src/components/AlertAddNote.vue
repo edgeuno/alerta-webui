@@ -36,10 +36,8 @@
               :counter="maxNoteLength"
               :label="$t('AddNote')"
               prepend-icon="edit"
-              :rules="textRules"
               name="input-7-1"
               autofocus
-              required
               box
             />
             <v-flex xs12>
@@ -101,12 +99,6 @@ export default {
     minNoteLength: 0,
   }),
   computed: {
-    textRules() {
-      return [
-        v => !!v || i18n.t('TextIsRequired'),
-        v => (v && v.length <= this.maxNoteLength) || `${i18n.t('TextMustBeLessThan')} ${this.maxNoteLength} ${i18n.t('characters')}`
-      ]
-    },
     actionsAvailable() {
       return [
         {
