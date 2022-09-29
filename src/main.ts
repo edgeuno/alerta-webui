@@ -14,6 +14,7 @@ import i18n from '@/plugins/i18n'
 
 import '@/plugins/vuetify'
 import './stylus/main.styl'
+import './assets/css/variables.css'
 import App from './App.vue'
 
 import '@/directives/hasPerms'

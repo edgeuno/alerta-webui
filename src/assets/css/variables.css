@@ -1,0 +1,12 @@
+:root {
+  --alert-color--critical: #E1394A;
+  --alert-color--ok: #4CE06E;
+  --alert-color--trace: #8975E0;
+  --alert-color--minor: #E0D153;
+  --alert-color--warning: #71bed5;
+  --alert-color--major: #ff9c2a;
+  --alert-color--security: #599fdb;
+  --alert-color--indeterminate: #BCFCFF;
+  --alert-color--debug: #f07fce;
+  --alert-color--unknown: #C0C0C0;
+}

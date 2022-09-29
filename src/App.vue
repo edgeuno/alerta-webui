@@ -259,9 +259,10 @@
 
       <v-toolbar
         v-if="selected.length > 0"
-        :color="isDark ? '#8e8e8e' : '#bcbcbc'"
         class="mb-1"
+        flat
       >
+        <!-- :color="isDark ? '#8e8e8e' : '#bcbcbc'" -->
         <v-tooltip bottom>
           <v-btn
             slot="activator"
