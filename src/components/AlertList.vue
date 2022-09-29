@@ -21,6 +21,17 @@
         slot-scope="{headers}"
       >
         <tr>
+          <th>
+            <v-checkbox
+              primary
+              hide-details
+              color="gray"
+              class="select-box"
+              :ripple="false"
+              :size="fontSize"
+              @click.stop="selectAll"
+            />
+          </th>
           <th
             v-for="header in headers"
             :key="header.text"
@@ -30,11 +41,13 @@
             :class="['column sortable', header.descending ? 'desc' : 'asc', indexHeaderInStack(header) >= 0 ? 'active' : '']"
             @click="changeSort(header)"
           >
-            {{ indexHeaderInStack(header) >= 0 ? indexHeaderInStack(header) + 1 : "" }}
-            <v-icon small> 
-              arrow_upward 
-            </v-icon>
-            {{ header.text }}
+            <span>
+              {{ header.text }}
+              {{ indexHeaderInStack(header) >= 0 ? indexHeaderInStack(header) + 1 : "" }}
+              <v-icon small> 
+                arrow_upward 
+              </v-icon>
+            </span>
           </th>
         </tr>
       </template>
@@ -554,6 +567,9 @@ export default {
     timer: null
   }),
   computed: {
+    isDark() {
+      return this.$store.getters.getPreference('isDark')
+    },
     sortedAlerts() {
       let resultAlerts = this.alerts
       let stack = this.sortStack
