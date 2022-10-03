@@ -12,8 +12,14 @@
         class="flex flex-row justify-between"
       >
         <v-layout row>
-          <v-flex grow pa-1>
-            <v-card color="transparent" elevation="0">
+          <v-flex
+            grow
+            pa-1
+          >
+            <v-card
+              color="transparent"
+              elevation="0"
+            >
               <v-btn
                 icon
                 @click="dialog = false"
@@ -229,7 +235,10 @@
             </v-card>
           </v-flex>
           
-          <v-flex shrink pa-1>
+          <v-flex
+            shrink
+            pa-1
+          >
             <v-tooltip bottom>
               <v-btn
                 slot="activator"
@@ -238,7 +247,10 @@
                 class="btn--plain px-1 mx-0"
                 @click="displayNotes(true)"
               >
-                <v-badge :color="isDark ? '#616161' : '#eeeeee'" left>
+                <v-badge
+                  :color="isDark ? '#616161' : '#eeeeee'"
+                  left
+                >
                   <template v-slot:badge>
                     <span>{{ hasHistoryNotes }}</span>
                   </template>
@@ -256,37 +268,37 @@
         </v-layout>
       </v-toolbar>
 
-    <v-card
-      flat
-    >
-      <alert-actions
-        v-if="item.id"
-        :id="item.id"
-        :status="item.status"
-        :is-watched="isWatched(item.tags)"
-        @take-action="takeAction"
-        @ack-alert="ackAlert"
-        @shelve-alert="shelveAlert"
-        @watch-alert="watchAlert"
-        @unwatch-alert="unwatchAlert"
-        @add-note="toggleNoteDialog(true)"
-        @delete-alert="deleteAlert"
-      />
-      <v-tabs
-        v-model="active"
-        grow
+      <v-card
+        flat
       >
-        <v-tab ripple>
-          <v-icon>info</v-icon>&nbsp;{{ $t('Details') }}
-        </v-tab>
-        <v-tab-item
-          :transition="false"
-          :reverse-transition="false"
+        <alert-actions
+          v-if="item.id"
+          :id="item.id"
+          :status="item.status"
+          :is-watched="isWatched(item.tags)"
+          @take-action="takeAction"
+          @ack-alert="ackAlert"
+          @shelve-alert="shelveAlert"
+          @watch-alert="watchAlert"
+          @unwatch-alert="unwatchAlert"
+          @add-note="toggleNoteDialog(true)"
+          @delete-alert="deleteAlert"
+        />
+        <v-tabs
+          v-model="active"
+          grow
         >
-          <v-card
-            flat
+          <v-tab ripple>
+            <v-icon>info</v-icon>&nbsp;{{ $t('Details') }}
+          </v-tab>
+          <v-tab-item
+            :transition="false"
+            :reverse-transition="false"
           >
-            <!-- <v-alert
+            <v-card
+              flat
+            >
+              <!-- <v-alert
                 v-for="note in notes"
                 :key="note.id"
                 :value="true"
@@ -311,8 +323,8 @@
                 <i>{{ note.text }}</i>
               </v-alert> -->
 
-            <!-- DEPRECATED -->
-            <!-- <v-alert
+              <!-- DEPRECATED -->
+              <!-- <v-alert
                 v-for="note in historyNotes"
                 :key="note.index"
                 type="info"
@@ -327,460 +339,460 @@
                 /></b> ({{ note.updateTime | timeago }})<br>
                 <i>{{ note.text }}</i>
               </v-alert> -->
-            <!-- DEPRECATED -->
-            <v-container
-              fluid
-              grid-list-lg
-            >
-              <v-layout 
-                row 
-                wrap
+              <!-- DEPRECATED -->
+              <v-container
+                fluid
+                grid-list-lg
               >
-                <v-flex 
-                  sm6 
-                  md4
+                <v-layout 
+                  row 
+                  wrap
                 >
-                  <v-card>
-                    <v-container>
-                      <h3 class="headline mb-0 text-xs-center">
-                        Overview
-                      </h3>
-                      <section
-                        class="my-2"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Severity') }}
+                  <v-flex 
+                    sm6 
+                    md4
+                  >
+                    <v-card>
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Overview
                         </h3>
-                        <div>
-                          <span :class="['label', 'label-' + item.previousSeverity]">
-                            {{ item.previousSeverity | capitalize }}
-                          </span>&nbsp;&rarr;&nbsp;
-                          <span :class="['label', 'label-' + item.severity]">
-                            {{ item.severity | capitalize }}
-                          </span>
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section
-                        class="my-2"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
+                        <section
+                          class="my-2"
                         >
-                          {{ $t('Service') }}
-                        </h3>
-                        <div
-                          v-for="service in item.service"
-                          :key="service"
-                          class="clickable"
-                          @click="queryBy('service', service)"
-                        >
-                          {{ service }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Text') }}
-                        </h3>
-                        <div
-                          class="alert-word-break"
-                          v-html="item.text"
-                        />
-                      </section>
-                      <v-divider class="my-2" />
-                      <section
-                        class="my-2"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          External Link
-                        </h3>
-                        <div
-                          v-if="typeof item.attributes === 'object'"
-                          v-html="item.attributes.externalLink"
-                        />
-                      </section>
-                    </v-container>
-                  </v-card>
-                  <v-card class="mt-3">
-                    <v-container>
-                      <h3 class="headline mb-0 text-xs-center">
-                        Case
-                      </h3>
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Status') }}
-                        </h3>
-                        <div>
-                          <span class="label">
-                            {{ item.status | capitalize }}
-                          </span>
-                          <span
-                            v-if="statusNote && statusNote.user"
-                          >&nbsp;{{ $t('by') }} <b>{{ statusNote.user }}</b> <br> ({{ statusNote.updateTime | timeago }})
-                          </span>
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Timeout') }}
-                        </h3>
-                        <div>
-                          {{ item.timeout }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Event') }}
-                        </h3>
-                        <div
-                          class="clickable alert-word-break"
-                          @click="queryBy('event', item.event)"
-                        >
-                          {{ item.event }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Correlate') }}
-                        </h3>
-                        <div
-                          v-for="event in item.correlate"
-                          :key="event"
-                          class="clickable"
-                          @click="queryBy('event', event)"
-                        >
-                          {{ event }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section
-                        v-if="statusNote && statusNote.user && statusNote.text"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          Notes
-                        </h3>
-                        <div class="alert-word-break">
-                          <v-icon small>
-                            error_outline
-                          </v-icon>
-                          <i>&nbsp;{{ statusNote.text }}</i>
-                        </div>
-                      </section>
-                    </v-container>
-                  </v-card>
-                </v-flex>
-                <v-flex 
-                  sm6 
-                  md4
-                >
-                  <v-card>
-                    <v-container>
-                      <h3 class="headline mb-0 text-xs-center">
-                        Duplication
-                      </h3>
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Type') }}
-                        </h3>
-                        <div>
-                          <span class="label">
-                            {{ item.type | splitCaps }}
-                          </span>
-                        </div>
-                      </section>
-                  
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('DuplicateCount') }}
-                        </h3>
-                        <div>
-                          <span>
-                            {{ item.duplicateCount }}
-                          </span>
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Origin') }}
-                        </h3>
-                        <div
-                          class="clickable"
-                          @click="queryBy('origin', item.origin)"
-                        >
-                          {{ item.origin }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Repeat') }}
-                        </h3>
-                        <div>
-                          <span class="label">
-                            {{ item.repeat | capitalize }}
-                          </span>
-                        </div>
-                      </section>
-                    </v-container>
-                  </v-card>
-                  <v-card class="mt-3">
-                    <v-container>
-                      <h3 class="headline mb-0 text-xs-center">
-                        Attributes
-                      </h3>
-                      <section
-                        v-for="(value, attr) in item.attributes"
-                        :key="attr"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ attr | splitCaps }}
-                        </h3>
-                        <div
-                          v-if="typeof value === 'object'"
-                        >
-                          <span
-                            v-for="v in value"
-                            :key="v"
-                            @click="queryBy(`_.${attr}`, v)"
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
                           >
-                            <span class="clickable">{{ v }}</span>&nbsp;
-                          </span>
-                        </div>
-                        <div
-                          v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
-                          class="link-text"
-                          v-html="value"
-                        />
-                        <div
-                          v-else
-                          class="clickable"
-                          @click="queryBy(`_.${attr}`, value)"
-                        >
-                          {{ value }}
-                        </div>
-
+                            {{ $t('Severity') }}
+                          </h3>
+                          <div>
+                            <span :class="['label', 'label-' + item.previousSeverity]">
+                              {{ item.previousSeverity | capitalize }}
+                            </span>&nbsp;&rarr;&nbsp;
+                            <span :class="['label', 'label-' + item.severity]">
+                              {{ item.severity | capitalize }}
+                            </span>
+                          </div>
+                        </section>
                         <v-divider class="my-2" />
-                      </section>
-                    </v-container>
-                  </v-card>
-                </v-flex>
-                <v-flex 
-                  sm6 
-                  md4
-                >
-                  <v-card>
-                    <v-container>
-                      <h3 class="headline mb-0 text-xs-center">
-                        Alert Details
-                      </h3>
-                      <section
-                        v-if="$config.customer_views"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
+                        <section
+                          class="my-2"
                         >
-                          {{ $t('TrendIndication') }}
-                        </h3>
-                        <div>
-                          <span class="label">
-                            {{ item.trendIndication | splitCaps }}
-                          </span>
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Value') }}
-                        </h3>
-                        <div>
-                          {{ item.value }}
-                        </div>
-                      </section>
-                      <section
-                        v-if="$config.customer_views"
-                      >
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Customer') }}
-                        </h3>
-                        <div
-                          class="clickable"
-                          @click="queryBy('customer', item.customer)"
-                        >
-                          {{ item.customer }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Environment') }}
-                        </h3>
-                        <div
-                          class="clickable"
-                          @click="queryBy('environment', item.environment)"
-                        >
-                          {{ item.environment }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Resource') }}
-                        </h3>
-                        <div
-                          class="clickable"
-                          @click="queryBy('resource', item.resource)"
-                        >
-                          {{ item.resource }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Group') }}
-                        </h3>
-                        <div
-                          class="clickable"
-                          @click="queryBy('group', item.group)"
-                        >
-                          {{ item.group }}
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('Tags') }}
-                        </h3>
-                        <div>
-                          <v-chip
-                            v-for="tag in item.tags"
-                            :key="tag"
-                            label
-                            small
-                            @click="queryBy('tags', tag)"
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
                           >
-                            <v-icon left>
-                              label
-                            </v-icon>{{ tag }}
-                          </v-chip>
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('AlertId') }}
-                        </h3>
-                        <span class="console-text">{{ item.id }}</span>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('LastReceiveAlertId') }}
-                        </h3>
-                        <span class="console-text">{{ item.lastReceiveId }}</span>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
-                        >
-                          {{ $t('CreateTime') }}
-                        </h3>
-                        <div>
-                          <date-time
-                            v-if="item.createTime"
-                            :value="item.createTime"
-                            format="longDate"
+                            {{ $t('Service') }}
+                          </h3>
+                          <div
+                            v-for="service in item.service"
+                            :key="service"
+                            class="clickable"
+                            @click="queryBy('service', service)"
+                          >
+                            {{ service }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Text') }}
+                          </h3>
+                          <div
+                            class="alert-word-break"
+                            v-html="item.text"
                           />
-                          ({{ item.createTime | timeago }})
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                          class="my-2"
                         >
-                          {{ $t('ReceiveTime') }}
-                        </h3>
-                        <div>
-                          <date-time
-                            v-if="item.receiveTime"
-                            :value="item.receiveTime"
-                            format="longDate"
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            External Link
+                          </h3>
+                          <div
+                            v-if="typeof item.attributes === 'object'"
+                            v-html="item.attributes.externalLink"
                           />
-                          ({{ item.receiveTime | timeago }})
-                        </div>
-                      </section>
-                      <v-divider class="my-2" />
-                      <section>
-                        <h3
-                          class="blue-grey--text body-1 text-uppercase"
+                        </section>
+                      </v-container>
+                    </v-card>
+                    <v-card class="mt-3">
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Case
+                        </h3>
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Status') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.status | capitalize }}
+                            </span>
+                            <span
+                              v-if="statusNote && statusNote.user"
+                            >&nbsp;{{ $t('by') }} <b>{{ statusNote.user }}</b> <br> ({{ statusNote.updateTime | timeago }})
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Timeout') }}
+                          </h3>
+                          <div>
+                            {{ item.timeout }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Event') }}
+                          </h3>
+                          <div
+                            class="clickable alert-word-break"
+                            @click="queryBy('event', item.event)"
+                          >
+                            {{ item.event }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Correlate') }}
+                          </h3>
+                          <div
+                            v-for="event in item.correlate"
+                            :key="event"
+                            class="clickable"
+                            @click="queryBy('event', event)"
+                          >
+                            {{ event }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section
+                          v-if="statusNote && statusNote.user && statusNote.text"
                         >
-                          {{ $t('LastReceiveTime') }}
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            Notes
+                          </h3>
+                          <div class="alert-word-break">
+                            <v-icon small>
+                              error_outline
+                            </v-icon>
+                            <i>&nbsp;{{ statusNote.text }}</i>
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                  </v-flex>
+                  <v-flex 
+                    sm6 
+                    md4
+                  >
+                    <v-card>
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Duplication
                         </h3>
-                        <div>
-                          <date-time
-                            v-if="item.lastReceiveTime"
-                            :value="item.lastReceiveTime"
-                            format="longDate"
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Type') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.type | splitCaps }}
+                            </span>
+                          </div>
+                        </section>
+                  
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('DuplicateCount') }}
+                          </h3>
+                          <div>
+                            <span>
+                              {{ item.duplicateCount }}
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Origin') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('origin', item.origin)"
+                          >
+                            {{ item.origin }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Repeat') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.repeat | capitalize }}
+                            </span>
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                    <v-card class="mt-3">
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Attributes
+                        </h3>
+                        <section
+                          v-for="(value, attr) in item.attributes"
+                          :key="attr"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ attr | splitCaps }}
+                          </h3>
+                          <div
+                            v-if="typeof value === 'object'"
+                          >
+                            <span
+                              v-for="v in value"
+                              :key="v"
+                              @click="queryBy(`_.${attr}`, v)"
+                            >
+                              <span class="clickable">{{ v }}</span>&nbsp;
+                            </span>
+                          </div>
+                          <div
+                            v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
+                            class="link-text"
+                            v-html="value"
                           />
-                          ({{ item.lastReceiveTime | timeago }})
-                        </div>
-                      </section>
-                    </v-container>
-                  </v-card>
-                </v-flex>
-              </v-layout>
-            </v-container>
+                          <div
+                            v-else
+                            class="clickable"
+                            @click="queryBy(`_.${attr}`, value)"
+                          >
+                            {{ value }}
+                          </div>
 
-            <v-card-text>
+                          <v-divider class="my-2" />
+                        </section>
+                      </v-container>
+                    </v-card>
+                  </v-flex>
+                  <v-flex 
+                    sm6 
+                    md4
+                  >
+                    <v-card>
+                      <v-container>
+                        <h3 class="headline mb-0 text-xs-center">
+                          Alert Details
+                        </h3>
+                        <section
+                          v-if="$config.customer_views"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('TrendIndication') }}
+                          </h3>
+                          <div>
+                            <span class="label">
+                              {{ item.trendIndication | splitCaps }}
+                            </span>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Value') }}
+                          </h3>
+                          <div>
+                            {{ item.value }}
+                          </div>
+                        </section>
+                        <section
+                          v-if="$config.customer_views"
+                        >
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Customer') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('customer', item.customer)"
+                          >
+                            {{ item.customer }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Environment') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('environment', item.environment)"
+                          >
+                            {{ item.environment }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Resource') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('resource', item.resource)"
+                          >
+                            {{ item.resource }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Group') }}
+                          </h3>
+                          <div
+                            class="clickable"
+                            @click="queryBy('group', item.group)"
+                          >
+                            {{ item.group }}
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('Tags') }}
+                          </h3>
+                          <div>
+                            <v-chip
+                              v-for="tag in item.tags"
+                              :key="tag"
+                              label
+                              small
+                              @click="queryBy('tags', tag)"
+                            >
+                              <v-icon left>
+                                label
+                              </v-icon>{{ tag }}
+                            </v-chip>
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('AlertId') }}
+                          </h3>
+                          <span class="console-text">{{ item.id }}</span>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('LastReceiveAlertId') }}
+                          </h3>
+                          <span class="console-text">{{ item.lastReceiveId }}</span>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('CreateTime') }}
+                          </h3>
+                          <div>
+                            <date-time
+                              v-if="item.createTime"
+                              :value="item.createTime"
+                              format="longDate"
+                            />
+                            ({{ item.createTime | timeago }})
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('ReceiveTime') }}
+                          </h3>
+                          <div>
+                            <date-time
+                              v-if="item.receiveTime"
+                              :value="item.receiveTime"
+                              format="longDate"
+                            />
+                            ({{ item.receiveTime | timeago }})
+                          </div>
+                        </section>
+                        <v-divider class="my-2" />
+                        <section>
+                          <h3
+                            class="blue-grey--text body-1 text-uppercase"
+                          >
+                            {{ $t('LastReceiveTime') }}
+                          </h3>
+                          <div>
+                            <date-time
+                              v-if="item.lastReceiveTime"
+                              :value="item.lastReceiveTime"
+                              format="longDate"
+                            />
+                            ({{ item.lastReceiveTime | timeago }})
+                          </div>
+                        </section>
+                      </v-container>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+
+              <v-card-text>
               <!-- <div class="flex xs12 ma-1">
                   <div class="d-flex align-top">
                     <div class="flex xs3 text-xs-left">
@@ -1236,104 +1248,104 @@
                     </div>
                   </div>
                 </div> -->
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
 
-        <v-tab ripple>
-          <v-icon>history</v-icon>&nbsp;{{ $t('History') }}
-        </v-tab>
-        <v-tab-item
-          :transition="false"
-          :reverse-transition="false"
-        >
-          <div class="tab-item-wrapper">
-            <v-data-table
-              :headers="headersByScreenSize"
-              :items="history"
-              item-key="index"
-              :pagination.sync="pagination"
-              sort-icon="arrow_drop_down"
-            >
-              <template
-                slot="items"
-                slot-scope="props"
-              >
-                <td class="hidden-sm-and-down">
-                  <span class="console-text">{{ props.item.id | shortId }}</span>
-                </td>
-                <td
-                  class="hidden-sm-and-down text-no-wrap"
-                >
-                  <date-time
-                    :value="props.item.updateTime"
-                    format="mediumDate"
-                  />
-                </td>
-                <td
-                  class="hidden-md-and-up text-no-wrap"
-                >
-                  <date-time
-                    :value="props.item.updateTime"
-                    format="shortTime"
-                  />
-                </td>
-                <td class="hidden-sm-and-down">
-                  <span :class="['label', 'label-' + props.item.severity]">
-                    {{ props.item.severity | capitalize }}
-                  </span>
-                </td>
-                <td class="hidden-sm-and-down">
-                  <span class="label">
-                    {{ props.item.status | capitalize }}
-                  </span>
-                </td>
-                <td class="hidden-sm-and-down">
-                  {{ props.item.timeout | hhmmss }}
-                </td>
-                <td>
-                  <span class="label">
-                    {{ props.item.type || 'unknown' | splitCaps }}
-                  </span>
-                </td>
-                <td class="hidden-sm-and-down">
-                  {{ props.item.event }}
-                </td>
-                <td class="hidden-sm-and-down">
-                  {{ props.item.value }}
-                </td>
-                <td>
-                  {{ props.item.user }}
-                </td>
-                <td>
-                  {{ props.item.text }}
-                </td>
-              </template>
-            </v-data-table>
-          </div>
-        </v-tab-item>
-
-        <v-tab ripple>
-          <v-icon>assessment</v-icon>&nbsp;{{ $t('Data') }}
-        </v-tab>
-        <v-tab-item
-          :transition="false"
-          :reverse-transition="false"
-        >
-          <v-card
-            :color="isDark ? 'grey darken-1' : 'grey lighten-3'"
-            class="mx-1"
-            style="overflow-x: auto;"
-            flat
+          <v-tab ripple>
+            <v-icon>history</v-icon>&nbsp;{{ $t('History') }}
+          </v-tab>
+          <v-tab-item
+            :transition="false"
+            :reverse-transition="false"
           >
-            <v-card-text>
-              <span class="console-text">{{ item.rawData || 'no raw data' }}</span>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs>
+            <div class="tab-item-wrapper">
+              <v-data-table
+                :headers="headersByScreenSize"
+                :items="history"
+                item-key="index"
+                :pagination.sync="pagination"
+                sort-icon="arrow_drop_down"
+              >
+                <template
+                  slot="items"
+                  slot-scope="props"
+                >
+                  <td class="hidden-sm-and-down">
+                    <span class="console-text">{{ props.item.id | shortId }}</span>
+                  </td>
+                  <td
+                    class="hidden-sm-and-down text-no-wrap"
+                  >
+                    <date-time
+                      :value="props.item.updateTime"
+                      format="mediumDate"
+                    />
+                  </td>
+                  <td
+                    class="hidden-md-and-up text-no-wrap"
+                  >
+                    <date-time
+                      :value="props.item.updateTime"
+                      format="shortTime"
+                    />
+                  </td>
+                  <td class="hidden-sm-and-down">
+                    <span :class="['label', 'label-' + props.item.severity]">
+                      {{ props.item.severity | capitalize }}
+                    </span>
+                  </td>
+                  <td class="hidden-sm-and-down">
+                    <span class="label">
+                      {{ props.item.status | capitalize }}
+                    </span>
+                  </td>
+                  <td class="hidden-sm-and-down">
+                    {{ props.item.timeout | hhmmss }}
+                  </td>
+                  <td>
+                    <span class="label">
+                      {{ props.item.type || 'unknown' | splitCaps }}
+                    </span>
+                  </td>
+                  <td class="hidden-sm-and-down">
+                    {{ props.item.event }}
+                  </td>
+                  <td class="hidden-sm-and-down">
+                    {{ props.item.value }}
+                  </td>
+                  <td>
+                    {{ props.item.user }}
+                  </td>
+                  <td>
+                    {{ props.item.text }}
+                  </td>
+                </template>
+              </v-data-table>
+            </div>
+          </v-tab-item>
+
+          <v-tab ripple>
+            <v-icon>assessment</v-icon>&nbsp;{{ $t('Data') }}
+          </v-tab>
+          <v-tab-item
+            :transition="false"
+            :reverse-transition="false"
+          >
+            <v-card
+              :color="isDark ? 'grey darken-1' : 'grey lighten-3'"
+              class="mx-1"
+              style="overflow-x: auto;"
+              flat
+            >
+              <v-card-text>
+                <span class="console-text">{{ item.rawData || 'no raw data' }}</span>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
+      </v-card>
     </v-card>
-  </v-card>
   </v-card>
 </template>
 
