@@ -3,7 +3,7 @@
     <v-data-table
       v-model="selected"
       :headers="customHeaders"
-      :items="alerts"
+      :items="sortedAlerts"
       item-key="id"
       :pagination.sync="pagination"
       :total-items="pagination.totalItems"
@@ -13,8 +13,31 @@
       :class="[ displayDensity ]"
       :style="columnWidths"
       sort-icon="arrow_drop_down"
-      select-all
+      disable-initial-sort
+      hide-default-header
     >
+      <template
+        slot="headers"
+        slot-scope="{headers}"
+      >
+        <tr>
+          <th
+            v-for="header in headers"
+            :key="header.text"
+            role="columnheader"
+            scope="col"
+            tabindex="0"
+            :class="['column sortable', header.descending ? 'desc' : 'asc', indexHeaderInStack(header) >= 0 ? 'active' : '']"
+            @click="changeSort(header)"
+          >
+            {{ indexHeaderInStack(header) >= 0 ? indexHeaderInStack(header) + 1 : "" }}
+            <v-icon small> 
+              arrow_upward 
+            </v-icon>
+            {{ header.text }}
+          </th>
+        </tr>
+      </template>
       <template
         slot="items"
         slot-scope="props"
@@ -523,12 +546,28 @@ export default {
       lastReceiveTime: { text: i18n.t('LastReceiveTime'), value: 'lastReceiveTime' },
       note: { text: i18n.t('LastNote'), value: 'note', sortable: false }
     },
+    sortStack: [],
     details: false,
     selectedId: null,
     multiselect: false,
     timer: null
   }),
   computed: {
+    sortedAlerts() {
+      let resultAlerts = this.alerts
+      let stack = this.sortStack
+      resultAlerts.sort(function (a, b) {
+        for (let i in stack) {
+          let key = stack[i].value
+          let desc = stack[i].descending
+          if (a[key] > b[key]) return desc ? -1 : 1
+          else if (a[key] < b[key]) return desc ? 1 : -1
+          else continue
+        }
+        return 0
+      })
+      return resultAlerts
+    },
     displayDensity() {
       return (
         this.$store.getters.getPreference('displayDensity') ||
@@ -610,6 +649,27 @@ export default {
     }
   },
   methods: {
+    changeSort (header) {
+      let indexH = this.indexHeaderInStack(header)
+      let sortByHash = `${this.pagination.sortBy},${header.value}`
+      if (indexH < 0) {
+        this.$set(header, 'descending', false)
+        this.pagination = Object.assign({}, this.pagination, {descending: false, sortBy: sortByHash })
+        this.sortStack.push(header)
+      } else {
+        if (!header.descending) {
+          this.$set(header, 'descending', true)
+          this.pagination = Object.assign({}, this.pagination, {descending: true})
+        } else {
+          this.pagination = Object.assign({}, this.pagination, {descending: true, sortBy: sortByHash.split(',').filter(sortKey => sortKey !== header.value).join(',') })
+          this.sortStack.splice(indexH, 1)
+        }
+        
+      }
+    },
+    indexHeaderInStack (header) {
+      return this.sortStack.findIndex(h => header.value === h.value)
+    },
     duration(item) {
       return moment.duration(moment().diff(moment(item.receiveTime)))
     },
