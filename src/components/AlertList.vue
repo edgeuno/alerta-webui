@@ -23,6 +23,7 @@
         <tr>
           <th>
             <v-checkbox
+              v-model="selected"
               primary
               hide-details
               color="gray"
@@ -517,6 +518,7 @@ import get from 'lodash/get'
 import DateTime from './lib/DateTime'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
+import { bus } from '@/common/bus'
 
 export default {
   components: {
@@ -665,7 +667,25 @@ export default {
       this.pagination = Object.assign({}, this.pagination, {rowsPerPage: val})
     }
   },
+  mounted() {
+    bus.$on('remove-multiselect', this.removeMultiSelect)
+  },
+  beforeDestroy() {
+    bus.$off('remove-multiselect', this.removeMultiSelect)
+  },
   methods: {
+    removeMultiSelect() {
+      this.multiselect = false
+      this.selected = []
+    },
+    selectAll() {
+      this.multiselect = !this.multiselect
+      if (this.multiselect) {
+        this.selected = this.sortedAlerts
+      } else {
+        this.selected = []
+      }
+    },
     changeSort (header) {
       let indexH = this.indexHeaderInStack(header)
       let sortByHash = `${this.pagination.sortBy},${header.value}`

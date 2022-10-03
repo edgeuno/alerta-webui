@@ -45,7 +45,7 @@
                 :disabled="!valid"
                 color="success"
                 type="submit"
-                @click="validate"
+                @click.stop.prevent="validate"
               >
                 {{ $t('Send') }}
               </v-btn>

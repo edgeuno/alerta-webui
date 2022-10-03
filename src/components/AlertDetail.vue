@@ -1395,7 +1395,6 @@ export default {
       return this.$store.getters.getPreference('isDark')
     },
     item() {
-      console.log(this.$store.state.alerts.alert)
       return this.$store.state.alerts.alert
     },
     actions() {

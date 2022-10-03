@@ -2,6 +2,7 @@ import AlertsApi from '@/services/api/alert.service'
 
 import moment from 'moment'
 import utils from '@/common/utils'
+import { bus } from '@/common/bus'
 
 const namespaced = true
 
@@ -227,15 +228,16 @@ const actions = {
   displayNotes({ commit }, bool) {
     commit('DISPLAY_NOTES', bool)
   },
-  async addBulkNotes({dispatch}, [alerts, text]) {
+  async addBulkNotes({dispatch}, [alerts, { note }]) {
     try {
       for await (let alert of alerts) {
-        dispatch('alerts/addNote', [alert.id, text])
+        if (alert) dispatch('addNote', [alert.id, note])
       }
     } catch (err) {
       console.error(err)
     } finally {
       dispatch('getAlerts')
+      bus.$emit('remove-multiselect')
     }
   },
   setIsAddingNoteBeforeAck({ commit }, bool) {

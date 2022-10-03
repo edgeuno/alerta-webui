@@ -83,13 +83,13 @@
         {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
       </v-tab>
       <v-spacer />
-      <v-btn
+      <!-- <v-btn
         flat
         icon
         @click="showSubGroup = !showSubGroup"
       >
         <v-icon>dashboard_customize</v-icon>
-      </v-btn>
+      </v-btn> -->
       <v-btn
         flat
         icon
