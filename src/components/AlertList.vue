@@ -23,7 +23,6 @@
         <tr>
           <th>
             <v-checkbox
-              v-model="selected"
               primary
               hide-details
               color="gray"
