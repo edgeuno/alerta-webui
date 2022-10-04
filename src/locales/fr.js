@@ -73,6 +73,7 @@ export const fr = {
   Unwatch: 'Unwatch', //'Ne plus surveiller',
   AddNote: 'Add note', //'Ajouter Note',
   Delete: 'Delete', //'Supprimer',
+  CreateTicket: 'Créer un billet',
 
   // Alert actions
   TextIsRequired: 'Text is required',

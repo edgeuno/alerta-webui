@@ -40,6 +40,14 @@
           >
             <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
           </v-btn>
+
+          <v-btn
+            outline
+            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+            @click="createTicket"
+          >
+            <v-icon>confirmation_number</v-icon>&nbsp;{{ $t('CreateTicket') }}
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-container>
@@ -207,6 +215,10 @@ export default {
   methods: {
     takeAction: debounce(function(action) {
       this.$emit('take-action', this.id, action, this.text)
+      this.close()
+    }, 200, {leading: true, trailing: false}),
+    createTicket: debounce(function(action) {
+      this.$emit('create-ticket', this.id)
       this.close()
     }, 200, {leading: true, trailing: false}),
     ackAlert: debounce(function() {

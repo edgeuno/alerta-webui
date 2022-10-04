@@ -73,6 +73,7 @@ export const en = {
   Unwatch: 'Unwatch',
   AddNote: 'Add note',
   Delete: 'Delete',
+  CreateTicket: 'Create Ticket',
 
   // Alert actions
   TextIsRequired: 'Text is required',

@@ -73,6 +73,7 @@ export const de = {
   Unwatch: 'Nicht beobachten',
   AddNote: 'Notiz hinzufügen',
   Delete: 'Löschen',
+  CreateTicket: 'Ticket erstellen',
 
   // Alert actions
   TextIsRequired: 'Text ist erforderlich',

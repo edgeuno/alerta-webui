@@ -228,6 +228,11 @@ const actions = {
   displayNotes({ commit }, bool) {
     commit('DISPLAY_NOTES', bool)
   },
+  
+  async createTicket({ commit, state }, alertId) {
+    await AlertsApi.createTicket(state.alert)
+  },
+
   async addBulkNotes({dispatch}, [alerts, { note }]) {
     try {
       for await (let alert of alerts) {

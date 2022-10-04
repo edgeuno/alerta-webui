@@ -126,5 +126,24 @@ export default {
       params: query
     }
     return api.get('/alerts/tags', config)
+  },
+  createTicket(alertData) {
+    const { text, severity, event: eventDescription, priority, status, customer, tags } = alertData
+    const data = new FormData()
+    const url = process.env.VUE_APP_CREATE_TICKET_URL
+    const name = text.split('(https://')[0] 
+
+    data.append('name', name)
+    data.append('description', eventDescription)
+    data.append('summary', `${text} \n\n Customer: ${customer} \n\n Status: ${status} \n\n Tags: ${tags.join('\n')}`)
+    data.append('severity', severity)
+    data.append('priority', priority)
+
+    return api.post(url, data, {
+      withCredentials: true,
+      headers: {
+        Cookie: process.env.VUE_APP_TICKET_ACCESS_KEY
+      }
+    })
   }
 }
