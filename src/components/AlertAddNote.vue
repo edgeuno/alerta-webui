@@ -20,7 +20,7 @@
             lazy-validation
             @submit="validate"
           >
-            <v-select
+            <!-- <v-select
               v-model="action"
               :items="actionsAvailable"
               item-disabled="disabled"
@@ -28,7 +28,7 @@
               item-text="label"
               label="Action"
               chips
-            />
+            /> -->
             <v-textarea
               v-model.trim="note"
               :minlength="minNoteLength"

@@ -126,24 +126,6 @@
               </v-icon>
             </v-btn>
           </v-flex>
-          
-
-          <!-- <v-flex v-if="someCanUnwatch" px6 class="py-0 px-1">
-            <v-btn
-              slot="activator"
-              block
-              depressed
-              class="btn--plain px-1 mx-0"
-              @click="unwatchAlert(item.id)"
-            >
-              <span>{{ $t('Unwatch') }}</span>
-              <v-icon
-                size="20px"
-              >
-                visibility_off
-              </v-icon>
-            </v-btn>
-          </v-flex> -->
 
           <v-flex
             v-if="someCanUnshelved"
@@ -244,7 +226,9 @@
               </v-icon>
             </v-btn>
           </v-flex>
+
           <v-flex
+            v-if="!someCanUnwatch"
             xs12
             class="py-0 px-1"
           >
@@ -260,6 +244,26 @@
                 class="ml-1"
               >
                 visibility
+              </v-icon>
+            </v-btn>
+          </v-flex>
+
+          <v-flex
+            v-if="someCanUnwatch"
+            px6
+            class="py-0 px-1"
+          >
+            <v-btn
+              slot="activator"
+              block
+              depressed
+              @click="toggleWatch"
+            >
+              <span>{{ $t('Unwatch') }}</span>
+              <v-icon
+                size="20px"
+              >
+                visibility_off
               </v-icon>
             </v-btn>
           </v-flex>
@@ -289,6 +293,9 @@ export default {
     selected() {
       return this.$store.state.alerts.selected
     },
+    username() {
+      return this.$store.getters['auth/getUsername']
+    },
     selectedLength() {
       return this.selected.length
     },
@@ -296,12 +303,14 @@ export default {
       return this.$config.actions
     },
     someCanUnack() {
-      return this.selected.some((item) => item.status == 'ack' || status == 'ACKED')
+      return this.selected.some(item => item.status == 'ack' || status == 'ACKED')
     },
-    // someCanUnwatch() {
-    // const tag = `watch:${this.username}`
-    // return this.selected.some((item) => item.tags ? tags.indexOf(tag) > -1 : false)
-    // },
+    someCanUnwatch() {
+      const tag = `watch:${this.username}`
+      return this.selected.some(item => {
+        return item.tags ? item.tags.indexOf(tag) > -1 : false
+      })
+    },
     someCanUnshelved() {
       return this.selected.some(item => item.status == 'shelved' || status == 'SHLVD')
     },

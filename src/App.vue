@@ -603,6 +603,18 @@ export default {
       Promise.all(this.selected.map(a => this.$store.dispatch('alerts/takeAction', [a.id, action, '']))).then(() => {
         this.clearSelected()
         this.$store.dispatch('alerts/getAlerts')
+      }).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Note added correctly!',
+          { root: true }
+        )
+      }).catch(() => {
+        this.$store.dispatch(
+          'notifications/error',
+          'Something wrong happened',
+          { root: true }
+        )
       })
     },
     addSingleNote({ note, action, id }) {
@@ -650,6 +662,11 @@ export default {
       
       this.$store.dispatch('alerts/addBulkNotes', [this.selected, note]).then(() => {
         this.clearSelected()
+        this.$store.dispatch(
+          'notifications/success',
+          'Notes added correctly!',
+          { root: true }
+        )
         this.$store.dispatch('alerts/getAlerts')
       })
     },
@@ -682,6 +699,12 @@ export default {
       Promise.all(map).then(() => {
         this.clearSelected()
         this.$store.dispatch('alerts/getAlerts')
+      }).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Alerts are being watched!',
+          { root: true }
+        )
       })
     },
     watchAlert(id) {
