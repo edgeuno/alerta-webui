@@ -248,11 +248,11 @@
                 @click="displayNotes(true)"
               >
                 <v-badge
-                  :color="isDark ? '#616161' : '#eeeeee'"
+                  :color="!isDark ? '#616161' : '#eeeeee'"
                   left
                 >
                   <template v-slot:badge>
-                    <span>{{ hasHistoryNotes }}</span>
+                    <span :style="{color: isDark ? '#616161' : '#eeeeee' }">{{ hasHistoryNotes }}</span>
                   </template>
                   <v-icon
                     size="20px"
