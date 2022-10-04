@@ -23,6 +23,7 @@
         <tr>
           <th>
             <v-checkbox
+              :checked="multiselect"
               primary
               hide-details
               color="gray"
@@ -73,7 +74,7 @@
               class="select-box"
               :ripple="false"
               :size="fontSize"
-              @click.stop
+              @click.stop="handleCheckAlert"
             />
             <!-- <v-icon
               v-else-if="props.item.trendIndication == 'moreSevere'"
@@ -517,7 +518,6 @@ import get from 'lodash/get'
 import DateTime from './lib/DateTime'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
-import { bus } from '@/common/bus'
 
 export default {
   components: {
@@ -651,6 +651,9 @@ export default {
         this.$store.dispatch('alerts/updateSelected', value)
       }
     },
+    doesSelectedHaveLength() {
+      return this.selected.length
+    },
     ackTimeout() {
       return this.$store.getters.getPreference('ackTimeout')
     },
@@ -664,26 +667,25 @@ export default {
   watch: {
     rowsPerPage(val) {
       this.pagination = Object.assign({}, this.pagination, {rowsPerPage: val})
+    },
+    doesSelectedHaveLength(bool) {
+      if (!bool) this.multiselect = false
     }
   },
-  mounted() {
-    bus.$on('remove-multiselect', this.removeMultiSelect)
-  },
-  beforeDestroy() {
-    bus.$off('remove-multiselect', this.removeMultiSelect)
-  },
   methods: {
-    removeMultiSelect() {
-      this.multiselect = false
-      this.selected = []
+    handleCheckAlert(e) {
+      const value = e.target.checked
+      if (value) this.multiselect = true
+      this.$emit('bulk-actions', this.multiselect)
     },
-    selectAll() {
-      this.multiselect = !this.multiselect
-      if (this.multiselect) {
-        this.selected = this.sortedAlerts
-      } else {
+    selectAll(e) {
+      const bool = e.target.checked
+      if (bool && !this.selected.length) this.selected = this.sortedAlerts
+      else {
         this.selected = []
+        this.multiselect = false
       }
+      this.$emit('bulk-actions', bool)
     },
     changeSort (header) {
       let indexH = this.indexHeaderInStack(header)

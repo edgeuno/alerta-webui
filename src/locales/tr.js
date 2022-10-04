@@ -61,6 +61,7 @@ export const tr = {
   Unknown: 'Bilinmeyen',
   NotValid: 'Geçersiz',
 
+  BulkActions: 'Toplu eylemler',
   // operator actions
   Open: 'Aç',
   Assign: 'Ata',

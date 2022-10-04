@@ -2,7 +2,6 @@ import AlertsApi from '@/services/api/alert.service'
 
 import moment from 'moment'
 import utils from '@/common/utils'
-import { bus } from '@/common/bus'
 
 const namespaced = true
 
@@ -237,7 +236,7 @@ const actions = {
       console.error(err)
     } finally {
       dispatch('getAlerts')
-      bus.$emit('remove-multiselect')
+      dispatch('updateSelected', [])
     }
   },
   setIsAddingNoteBeforeAck({ commit }, bool) {

@@ -150,6 +150,7 @@
               v-if="env == filter.environment || env == 'ALL'"
               :alerts="alertsByEnvironment"
               @set-alert="setAlert"
+              @bulk-actions="isBulkActions = $event"
             />
           </keep-alive>
         </v-tab-item>
@@ -159,6 +160,11 @@
     <alert-list-filter
       :value="sidesheet"
       @close="sidesheet = false"
+    />
+
+    <alerts-bulk-actions-panel
+      :value="isBulkActions"
+      @close="isBulkActions = false; selected = []"
     />
   </div>
 </template>
@@ -175,7 +181,8 @@ export default {
   components: {
     AlertList,
     AlertIndicator: () => import('@/components/AlertIndicator.vue'),
-    AlertListFilter: () => import('@/components/AlertListFilter.vue')
+    AlertListFilter: () => import('@/components/AlertListFilter.vue'),
+    AlertsBulkActionsPanel: () => import('@/components/AlertsBulkActionsPanel.vue')
   },
   props: {
     query: {
@@ -196,6 +203,7 @@ export default {
   },
   data: () => ({
     currentTab: null,
+    isBulkActions: false,
     showSubGroup:false,
     densityDialog: false,
     selectedId: null,
@@ -206,6 +214,14 @@ export default {
   computed: {
     audioURL() {
       return this.$config.audio.new || this.$store.getters.getPreference('audioURL')
+    },
+    selected: {
+      get() {
+        return this.$store.state.alerts.selected
+      },
+      set(value) {
+        this.$store.dispatch('alerts/updateSelected', value)
+      }
     },
     defaultTab() {
       return this.filter.environment ? `tab-${this.filter.environment}` : 'tab-ALL'

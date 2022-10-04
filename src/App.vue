@@ -100,7 +100,6 @@
       </v-navigation-drawer>
 
       <v-toolbar
-        v-if="selected.length == 0"
         :color="isDark ? '#616161' : '#eeeeee'"
         flat
         class="mb-1"
@@ -136,6 +135,7 @@
           prepend-inner-icon="search"
           solo
           clearable
+          :disabled="Boolean(selected.length)"
           height="44"
           class="pt-2 mr-3 hidden-sm-and-down"
           @focus="hasFocus = true"
@@ -149,6 +149,7 @@
             >
               <template v-slot:activator="{ on }">
                 <v-icon
+                  :disabled="Boolean(selected.length)"
                   v-on="on"
                   @click="saveSearch"
                 >
@@ -169,6 +170,7 @@
               slot="activator"
               :input-value="isWatch"
               hide-details
+              :disabled="Boolean(selected.length)"
               open-delay="3000"
               @change="toggle('isWatch', $event)"
             />
@@ -256,217 +258,6 @@
           </v-btn>
         </span>
       </v-toolbar>
-
-      <v-toolbar
-        v-if="selected.length > 0"
-        class="mb-1"
-        flat
-      >
-        <!-- :color="isDark ? '#8e8e8e' : '#bcbcbc'" -->
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            @click="clearSelected"
-          >
-            <v-icon>close</v-icon>
-          </v-btn>
-          <span>{{ $t('Cancel') }}</span>
-        </v-tooltip>
-        <span class="hidden-sm-and-down">
-          <v-toolbar-title>
-            Bulk actions:
-          </v-toolbar-title>
-        </span>
-        <v-spacer />
-
-        <span class="subheading">
-          {{ selected.length }}<span class="hidden-sm-and-down"> {{ $t('selected') }}</span>
-        </span>
-
-        <v-spacer />
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="toggleWatch()"
-          >
-            <v-icon>
-              visibility
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Watch') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="bulkAckAlert(null)"
-          >
-            <v-icon>
-              check
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Ack') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="bulkShelveAlert()"
-          >
-            <v-icon>
-              schedule
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Shelve') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="takeBulkAction('close')"
-          >
-            <v-icon>
-              highlight_off
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Close') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="bulkDeleteAlert()"
-          >
-            <v-icon>
-              delete
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Delete') }}</span>
-        </v-tooltip>
-
-        <v-menu
-          bottom
-          left
-        >
-          <v-btn
-            slot="activator"
-            flat
-            icon
-            small
-            class="btn--plain px-1 mx-0"
-          >
-            <v-icon small>
-              more_vert
-            </v-icon>
-          </v-btn>
-
-          <v-list
-            subheader
-          >
-            <v-subheader>Actions</v-subheader>
-            <v-divider />
-            <v-list-tile
-              v-for="(action, i) in actions"
-              :key="i"
-              @click="takeBulkAction(action)"
-            >
-              <v-list-tile-title>{{ action | splitCaps }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
-
-        <v-spacer />
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isLoggedIn || !isAuthRequired || isAllowReadonly"
-            slot="activator"
-            icon
-            @click="toggleFullScreen"
-          >
-            <v-icon>{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</v-icon>
-          </v-btn>
-          <span>{{ $t('FullScreen') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isLoggedIn || !isAuthRequired || isAllowReadonly"
-            slot="activator"
-            icon
-          >
-            <v-icon @click="refresh">
-              refresh
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Refresh') }}</span>
-        </v-tooltip>
-
-        <v-menu
-          v-show="isLoggedIn"
-          v-model="menu"
-          :close-on-content-click="false"
-          :nudge-width="200"
-          offset-x
-        >
-          <v-btn
-            slot="activator"
-            icon
-          >
-            <v-avatar
-              size="32px"
-            >
-              <img
-                v-if="avatar && !error"
-                :src="avatar"
-                @error="error = true"
-              >
-              <v-icon
-                v-else
-                v-text="navbar.signin.icon"
-              />
-            </v-avatar>
-          </v-btn>
-
-          <profile-me
-            v-if="profile"
-            :profile="profile"
-            @close="menu = false"
-          />
-        </v-menu>
-
-        <span class="hidden-xs-only">
-          <v-btn
-            v-show="!isLoggedIn && isSignupEnabled"
-            round
-            outline
-            color="primary"
-            disabled
-          >
-            {{ $t('SignUp') }}
-          </v-btn>
-          <v-btn
-            v-show="!isLoggedIn"
-            round
-            color="primary"
-            disabled
-          >
-            {{ $t('LogIn') }}
-          </v-btn>
-        </span>
-      </v-toolbar>
     </div>
 
     <v-content>
@@ -521,6 +312,7 @@ import Snackbar from '@/components/lib/Snackbar.vue'
 import AlertAddNote from '@/components/AlertAddNote'
 import NotesDialog from '@/components/NotesDialog'
 import i18n from '@/plugins/i18n'
+import { bus } from '@/common/bus.ts'
 
 export default {
   name: 'App',
@@ -752,8 +544,27 @@ export default {
       this.$store.dispatch('getUserPrefs')
       this.$store.dispatch('getUserQueries')
     }
+
+    bus.$on('take-bulk-action', this.takeBulkAction)
+    bus.$on('bulk-ack-alert', this.bulkAckAlert)
+    bus.$on('bulk-shelve-alert', this.bulkShelveAlert)
+    bus.$on('toggle-watch', this.toggleWatch)
+    bus.$on('bulk-add-note', this.bulkAddNote)
+    bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
+  },
+  
+  beforeDestroy() {
+    bus.$off('take-bulk-action', this.takeBulkAction)
+    bus.$off('bulk-ack-alert', this.bulkAckAlert)
+    bus.$off('bulk-shelve-alert', this.bulkShelveAlert)
+    bus.$off('toggle-watch', this.toggleWatch)
+    bus.$off('bulk-add-note', this.bulkAddNote)
+    bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
   },
   methods: {
+    bulkAddNote() {
+      this.toggleNoteDialog(true)
+    },
     addAlertNote(data) {
       this.selected.length ? this.bulkAckAlert(data) : this.addSingleNote(data)
     },

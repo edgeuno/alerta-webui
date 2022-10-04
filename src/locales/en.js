@@ -61,6 +61,7 @@ export const en = {
   Unknown: 'Unknown',
   NotValid: 'Not Valid',
 
+  BulkActions: 'Bulk Actions',
   // operator actions
   Open: 'Open',
   Assign: 'Assign',

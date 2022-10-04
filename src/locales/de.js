@@ -61,6 +61,7 @@ export const de = {
   Unknown: 'Unbekannt',
   NotValid: 'Nicht gültig',
 
+  BulkActions: 'Massenaktionen',
   // operator actions
   Open: 'Öffen',
   Assign: 'Zuweisen',
