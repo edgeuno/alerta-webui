@@ -238,11 +238,16 @@ const actions = {
     })
   },
 
-  async addBulkNotes({dispatch}, [alerts, { note }]) {
+  async addBulkNotes({dispatch, state }, [alerts, { note }]) {
     try {
-      for await (let alert of alerts) {
-        if (alert) dispatch('addNote', [alert.id, note])
+      for (let alert of alerts) {
+        if (alert)  {
+          if (state.isAddNoteBeforeAck) dispatch('takeAction', [alert.id, 'ack', note])
+          else dispatch('addNote', [alert.id, note])
+        }
       }
+
+      dispatch('alerts/setIsAddingNoteBeforeAck', false)
     } catch (err) {
       console.error(err)
     } finally {

@@ -566,7 +566,7 @@ export default {
       this.toggleNoteDialog(true)
     },
     addAlertNote(data) {
-      this.selected.length ? this.bulkAckAlert(data) : this.addSingleNote(data)
+      this.selected.length > 1 ? this.bulkAckAlert(data) : this.addSingleNote(data)
     },
     submitSearch(query) {
       this.$store.dispatch('alerts/updateQuery', { q: query })
@@ -606,7 +606,7 @@ export default {
       }).then(() => {
         this.$store.dispatch(
           'notifications/success',
-          'Note added correctly!',
+          'Bulk action executed correctly!',
           { root: true }
         )
       }).catch(() => {
@@ -619,16 +619,22 @@ export default {
     },
     addSingleNote({ note, action, id }) {
       try {
-        this.$store.dispatch('alerts/addNote', [id, note]).then(() => {
+        let alertId = id
+        if (alertId === '' && this.$store.state.alerts.isAddNoteBeforeAck) {
+          alertId = this.selected[0].id
+        }
+
+        this.$store.dispatch('alerts/addNote', [alertId, note]).then(() => {
           this.$store.dispatch(
             'notifications/success',
             'Note added correctly!',
             { root: true }
           )
         })
+
         if (this.$store.state.alerts.isAddNoteBeforeAck) {
           this.$store
-            .dispatch('alerts/takeAction', [id, action, note]).then(() => {
+            .dispatch('alerts/takeAction', [alertId, action, note]).then(() => {
               this.$store.dispatch(
                 'notifications/success',
                 'Note added correctly!',
@@ -656,6 +662,7 @@ export default {
     bulkAckAlert(note) {
       if (!note) {
         alert('To bulk ack this alerts you need to first add a note :)')
+        this.$store.dispatch('alerts/setIsAddingNoteBeforeAck', true)
         this.toggleNoteDialog(true)
         return
       }

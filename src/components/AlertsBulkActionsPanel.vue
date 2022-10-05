@@ -92,6 +92,7 @@
             class="py-0 px-1"
           >
             <v-btn
+              v-if="!someCanUnack"
               slot="activator"
               block
               depressed
@@ -109,6 +110,7 @@
 
           <v-flex
             v-if="someCanUnack"
+            :xs12="someCanUnack"
             xs6
             class="py-0 px-1"
           >
