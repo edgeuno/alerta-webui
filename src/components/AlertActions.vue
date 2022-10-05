@@ -40,14 +40,6 @@
             </v-btn>
   
             <v-btn
-              outline
-              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
-              @click="deleteAlert"
-            >
-              <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
-            </v-btn>
-  
-            <v-btn
               v-if="!alertHasTicket"
               outline
               :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
@@ -55,13 +47,11 @@
             >
               <v-icon>confirmation_number</v-icon>&nbsp;{{ $t('CreateTicket') }}
             </v-btn>
-          </div>
-          <div class="d-flex justify-end">
             <a
-              v-if="alertHasTicket"
+              v-else
               :href="ticketUrl"
               target="_blank"
-              style="max-width: 10rem; color: inherit; text-decoration: none;"
+              style="color: inherit; text-decoration: none;"
               class="d-inline-block"
             >
               <v-btn
@@ -71,6 +61,16 @@
                 <v-icon>confirmation_number</v-icon>&nbsp; {{ $t('Ticket') }}
               </v-btn>
             </a>
+          </div>
+          <div class="d-flex justify-end">
+            <v-btn
+              outline
+              style="max-width: 10rem"
+              :color="`${isDark ? 'red lighten-1' : 'red darken-2'}`"
+              @click="deleteAlert"
+            >
+              <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
+            </v-btn>
           </div>
         </v-flex>
       </v-layout>
