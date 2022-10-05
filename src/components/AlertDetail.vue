@@ -180,7 +180,7 @@
                 </v-btn>
                 <span>{{ $t('Delete') }}</span>
               </v-tooltip>
-      
+
               <v-tooltip
                 :key="copyIconText"
                 bottom
@@ -283,6 +283,7 @@
           @unwatch-alert="unwatchAlert"
           @add-note="toggleNoteDialog(true)"
           @delete-alert="deleteAlert"
+          @create-ticket="createTicket"
         />
         <v-tabs
           v-model="active"
@@ -593,6 +594,7 @@
                           <div
                             v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
                             class="link-text"
+                            style="overflow-wrap: break-word;"
                             v-html="value"
                           />
                           <div
@@ -1486,6 +1488,11 @@ export default {
       this.toggleNoteDialog(true)
       this.$store.commit('alerts/SET_NOTE_BEFORE_ACK', true)
     },
+    createTicket: debounce(function(id) {
+      this.$store
+        .dispatch('alerts/createTicket', id)
+        .then(() => this.getAlert(id))
+    }, 200, {leading: true, trailing: false}),
     takeAction: debounce(function(id, action, text) {
       this.$store
         .dispatch('alerts/takeAction', [id, action, text])

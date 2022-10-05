@@ -227,6 +227,17 @@ const actions = {
   displayNotes({ commit }, bool) {
     commit('DISPLAY_NOTES', bool)
   },
+  
+  async createTicket({ dispatch }, alertId) {
+    await AlertsApi.createTicket(alertId).then(() => {
+      dispatch(
+        'notifications/success',
+        'Ticket created correctly!',
+        { root: true }
+      )
+    })
+  },
+
   async addBulkNotes({dispatch}, [alerts, { note }]) {
     try {
       for await (let alert of alerts) {

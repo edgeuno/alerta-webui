@@ -74,6 +74,7 @@ export const tr = {
   Unwatch: 'İzleme kaldır',
   AddNote: 'Not ekle',
   Delete: 'Sil',
+  CreateTicket: 'Bilet Oluştur',
 
   // Alert actions
   TextIsRequired: 'Metin zorunludur',

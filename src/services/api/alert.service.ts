@@ -126,5 +126,10 @@ export default {
       params: query
     }
     return api.get('/alerts/tags', config)
+  },
+  createTicket(alertId) {
+    return api.post('webhooks/tickets', {
+      alert_id: alertId
+    })
   }
 }
