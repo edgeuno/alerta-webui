@@ -6,48 +6,72 @@
       fluid
     >
       <v-layout>
-        <v-flex>
-          <v-btn
-            v-show="!isWatched"
-            outline
-            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
-            @click="watchAlert"
-          >
-            <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
-          </v-btn>
-
-          <v-btn
-            v-show="isWatched"
-            outline
-            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
-            @click="unwatchAlert"
-          >
-            <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
-          </v-btn>
-
-          <v-btn
-            outline
-            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
-            @click="$emit('add-note')"
-          >
-            <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
-          </v-btn>
-
-          <v-btn
-            outline
-            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
-            @click="deleteAlert"
-          >
-            <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
-          </v-btn>
-
-          <v-btn
-            outline
-            :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
-            @click="createTicket"
-          >
-            <v-icon>confirmation_number</v-icon>&nbsp;{{ $t('CreateTicket') }}
-          </v-btn>
+        <v-flex
+          d-flex
+          row
+          no-wrap
+          justify-space-between
+        >
+          <div>
+            <v-btn
+              v-show="!isWatched"
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="watchAlert"
+            >
+              <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
+            </v-btn>
+  
+            <v-btn
+              v-show="isWatched"
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="unwatchAlert"
+            >
+              <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
+            </v-btn>
+  
+            <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="$emit('add-note')"
+            >
+              <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
+            </v-btn>
+  
+            <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="deleteAlert"
+            >
+              <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
+            </v-btn>
+  
+            <v-btn
+              v-if="!alertHasTicket"
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="createTicket"
+            >
+              <v-icon>confirmation_number</v-icon>&nbsp;{{ $t('CreateTicket') }}
+            </v-btn>
+          </div>
+          <div class="d-flex justify-end">
+            <a
+              v-if="alertHasTicket"
+              :href="ticketUrl"
+              target="_blank"
+              style="max-width: 10rem; color: inherit; text-decoration: none;"
+              class="d-inline-block"
+            >
+              <v-btn
+                outline
+                :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              >
+                <v-icon>confirmation_number</v-icon>&nbsp; {{ $t('Ticket') }}
+              </v-btn>
+            </a>
+          </div>
         </v-flex>
       </v-layout>
     </v-container>
@@ -210,6 +234,13 @@ export default {
     },
     isClosed() {
       return this.status == 'closed'
+    },
+    alertHasTicket() {
+      const keys = Object.keys(this.$store.state.alerts.alert.attributes)
+      return keys.includes('ticket_id')
+    },
+    ticketUrl() {
+      return this.$store.state.alerts.alert.attributes.ticket_url_raw
     }
   },
   methods: {

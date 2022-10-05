@@ -594,6 +594,7 @@
                           <div
                             v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
                             class="link-text"
+                            style="overflow-wrap: break-word;"
                             v-html="value"
                           />
                           <div
