@@ -116,7 +116,7 @@
               slot="activator"
               block
               depressed
-              @click="takeAction(item.id, 'unack')"
+              @click="takeBulkAction('unack')"
             >
               <span>{{ $t('Unack') }}</span>
               <v-icon
