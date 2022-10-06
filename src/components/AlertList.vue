@@ -155,25 +155,6 @@
               </v-chip>
             </span>
             <span
-              v-if="showNotesIcon"
-            >
-              <span
-                v-if="lastNote(props.item)"
-                class="pl-2"
-              >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon
-                      v-bind="attrs"
-                      small
-                      v-on="on"
-                    >text_snippet</v-icon>
-                  </template>
-                  <span>{{ lastNote(props.item) }}</span>
-                </v-tooltip>
-              </span>
-            </span>
-            <span
               v-if="col == 'service'"
             >
               {{ props.item.service.join(', ') }}
@@ -194,7 +175,27 @@
             </span>
             <span
               v-if="col == 'text'"
+              style="display: flex; gap: 1rem; align-items: center;"
             >
+              <span
+                v-if="showNotesIcon"
+              >
+                <span
+                  v-if="lastNote(props.item)"
+                  class="pl-2"
+                >
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        v-bind="attrs"
+                        small
+                        v-on="on"
+                      >text_snippet</v-icon>
+                    </template>
+                    <span>{{ lastNote(props.item) }}</span>
+                  </v-tooltip>
+                </span>
+              </span>
               <div class="fixed-table">
                 <div class="text-truncate">
                   <span v-html="props.item.text" />
