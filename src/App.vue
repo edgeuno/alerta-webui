@@ -127,39 +127,7 @@
 
         <v-spacer />
 
-        <v-text-field
-          v-if="$route.name === 'alerts'"
-          v-model="query"
-          :flat="!hasFocus"
-          :label="$t('Search')"
-          prepend-inner-icon="search"
-          solo
-          clearable
-          :disabled="Boolean(selected.length)"
-          height="44"
-          class="pt-2 mr-3 hidden-sm-and-down"
-          @focus="hasFocus = true"
-          @blur="hasFocus = false"
-          @change="submitSearch"
-          @click:clear="clearSearch"
-        >
-          <template v-slot:append-outer>
-            <v-tooltip
-              bottom
-            >
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  :disabled="Boolean(selected.length)"
-                  v-on="on"
-                  @click="saveSearch"
-                >
-                  push_pin
-                </v-icon>
-              </template>
-              <span>{{ $t('Save') }}</span>
-            </v-tooltip>
-          </template>
-        </v-text-field>
+        <searchbar />
 
         <div
           v-if="$route.name === 'alerts'"
@@ -198,7 +166,8 @@
             slot="activator"
             icon
           >
-            <v-icon @click="refresh">
+            <!-- @click="refresh" -->
+            <v-icon>
               refresh
             </v-icon>
           </v-btn>
@@ -306,22 +275,19 @@
 </template>
 
 <script>
-import Banner from '@/components/lib/Banner.vue'
 import ProfileMe from '@/components/auth/ProfileMe.vue'
-import Snackbar from '@/components/lib/Snackbar.vue'
-import AlertAddNote from '@/components/AlertAddNote'
-import NotesDialog from '@/components/NotesDialog'
 import i18n from '@/plugins/i18n'
 import { bus } from '@/common/bus.ts'
 
 export default {
   name: 'App',
   components: {
-    Banner,
     ProfileMe,
-    Snackbar,
-    NotesDialog,
-    AlertAddNoteDialog: AlertAddNote
+    Banner: () => import('@/components/lib/Banner.vue'),
+    Snackbar: () => import('@/components/lib/Snackbar.vue'),
+    NotesDialog: () => ('@/components/NotesDialog'),
+    AlertAddNoteDialog: () => import('@/components/AlertAddNote'),
+    Searchbar: () => import('@/components/Searchbar')
   },
   props: [],
   data: () => ({
@@ -543,23 +509,24 @@ export default {
     if (this.isLoggedIn) {
       this.$store.dispatch('getUserPrefs')
       this.$store.dispatch('getUserQueries')
+      
+      bus.$on('take-bulk-action', this.takeBulkAction)
+      bus.$on('bulk-ack-alert', this.bulkAckAlert)
+      bus.$on('bulk-shelve-alert', this.bulkShelveAlert)
+      bus.$on('toggle-watch', this.toggleWatch)
+      bus.$on('bulk-add-note', this.bulkAddNote)
+      bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
     }
-
-    bus.$on('take-bulk-action', this.takeBulkAction)
-    bus.$on('bulk-ack-alert', this.bulkAckAlert)
-    bus.$on('bulk-shelve-alert', this.bulkShelveAlert)
-    bus.$on('toggle-watch', this.toggleWatch)
-    bus.$on('bulk-add-note', this.bulkAddNote)
-    bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
   },
-  
   beforeDestroy() {
-    bus.$off('take-bulk-action', this.takeBulkAction)
-    bus.$off('bulk-ack-alert', this.bulkAckAlert)
-    bus.$off('bulk-shelve-alert', this.bulkShelveAlert)
-    bus.$off('toggle-watch', this.toggleWatch)
-    bus.$off('bulk-add-note', this.bulkAddNote)
-    bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
+    if (this.isLoggedIn) {
+      bus.$off('take-bulk-action', this.takeBulkAction)
+      bus.$off('bulk-ack-alert', this.bulkAckAlert)
+      bus.$off('bulk-shelve-alert', this.bulkShelveAlert)
+      bus.$off('toggle-watch', this.toggleWatch)
+      bus.$off('bulk-add-note', this.bulkAddNote)
+      bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
+    }
   },
   methods: {
     bulkAddNote() {
@@ -574,7 +541,6 @@ export default {
         query: { ...this.$router.query, q: query },
         hash: this.$store.getters['alerts/getHash']
       })
-      this.refresh()
     },
     clearSearch() {
       this.query = null
@@ -583,7 +549,6 @@ export default {
         query: { ...this.$router.query, q: undefined },
         hash: this.$store.getters['alerts/getHash']
       })
-      this.refresh()
     },
     clearSelected() {
       this.$store.dispatch('alerts/updateSelected', [])
@@ -740,12 +705,6 @@ export default {
     },
     isFullscreen() {
       return document.fullscreenElement
-    },
-    refresh() {
-      this.$store.dispatch('set', ['refresh', true])
-      setTimeout(() => {
-        this.$store.dispatch('set', ['refresh', false])
-      }, 300)
     }
   }
 }
