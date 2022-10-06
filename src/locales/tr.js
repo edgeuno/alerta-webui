@@ -75,6 +75,7 @@ export const tr = {
   AddNote: 'Not ekle',
   Delete: 'Sil',
   CreateTicket: 'Bilet Oluştur',
+  ViewTicket: 'Bileti görüntüle',
 
   // Alert actions
   TextIsRequired: 'Metin zorunludur',

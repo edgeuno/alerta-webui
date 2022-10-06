@@ -75,6 +75,7 @@ export const de = {
   AddNote: 'Notiz hinzufügen',
   Delete: 'Löschen',
   CreateTicket: 'Ticket erstellen',
+  ViewTicket: 'Ticket ansehen',
 
   // Alert actions
   TextIsRequired: 'Text ist erforderlich',

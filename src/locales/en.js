@@ -75,6 +75,7 @@ export const en = {
   AddNote: 'Add note',
   Delete: 'Delete',
   CreateTicket: 'Create Ticket',
+  ViewTicket: 'View Ticket',
 
   // Alert actions
   TextIsRequired: 'Text is required',

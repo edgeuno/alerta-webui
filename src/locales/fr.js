@@ -75,6 +75,7 @@ export const fr = {
   AddNote: 'Add note', //'Ajouter Note',
   Delete: 'Delete', //'Supprimer',
   CreateTicket: 'Créer un billet',
+  ViewTicket: 'Voir le billet',
 
   // Alert actions
   TextIsRequired: 'Text is required',

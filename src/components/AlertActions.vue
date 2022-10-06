@@ -58,7 +58,7 @@
                 outline
                 :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
               >
-                <v-icon>confirmation_number</v-icon>&nbsp; {{ $t('Ticket') }}
+                <v-icon>confirmation_number</v-icon>&nbsp; {{ $t('ViewTicket') }}
               </v-btn>
             </a>
           </div>

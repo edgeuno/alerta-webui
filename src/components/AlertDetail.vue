@@ -575,37 +575,39 @@
                           v-for="(value, attr) in item.attributes"
                           :key="attr"
                         >
-                          <h3
-                            class="blue-grey--text body-1 text-uppercase"
-                          >
-                            {{ attr | splitCaps }}
-                          </h3>
-                          <div
-                            v-if="typeof value === 'object'"
-                          >
-                            <span
-                              v-for="v in value"
-                              :key="v"
-                              @click="queryBy(`_.${attr}`, v)"
+                          <div v-if="!attr.includes('_raw')">
+                            <h3
+                              class="blue-grey--text body-1 text-uppercase"
                             >
-                              <span class="clickable">{{ v }}</span>&nbsp;
-                            </span>
-                          </div>
-                          <div
-                            v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
-                            class="link-text"
-                            style="overflow-wrap: break-word;"
-                            v-html="value"
-                          />
-                          <div
-                            v-else
-                            class="clickable"
-                            @click="queryBy(`_.${attr}`, value)"
-                          >
-                            {{ value }}
-                          </div>
+                              {{ attr | splitCaps }}
+                            </h3>
+                            <div
+                              v-if="typeof value === 'object'"
+                            >
+                              <span
+                                v-for="v in value"
+                                :key="v"
+                                @click="queryBy(`_.${attr}`, v)"
+                              >
+                                <span class="clickable">{{ v }}</span>&nbsp;
+                              </span>
+                            </div>
+                            <div
+                              v-else-if="typeof value === 'string' && (value.includes('http://') || value.includes('https://'))"
+                              class="link-text"
+                              style="overflow-wrap: break-word;"
+                              v-html="value"
+                            />
+                            <div
+                              v-else
+                              class="clickable"
+                              @click="queryBy(`_.${attr}`, value)"
+                            >
+                              {{ value }}
+                            </div>
 
-                          <v-divider class="my-2" />
+                            <v-divider class="my-2" />
+                          </div>
                         </section>
                       </v-container>
                     </v-card>
