@@ -91,7 +91,7 @@ export default {
       },
       stepThree: {
         tags: [],
-        timeout: 0,
+        timeout: 86400,
         attributes: []
       }
     },
@@ -132,7 +132,7 @@ export default {
         },
         stepThree: {
           tags: [],
-          timeout: 0,
+          timeout: 86400,
           attributes: ''
         }
       }
