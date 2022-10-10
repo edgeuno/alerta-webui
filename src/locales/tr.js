@@ -76,6 +76,7 @@ export const tr = {
   Delete: 'Sil',
   CreateTicket: 'Bilet Oluştur',
   ViewTicket: 'Bileti görüntüle',
+  Assign: 'Atamak',
 
   // Alert actions
   TextIsRequired: 'Metin zorunludur',

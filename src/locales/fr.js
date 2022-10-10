@@ -76,6 +76,7 @@ export const fr = {
   Delete: 'Delete', //'Supprimer',
   CreateTicket: 'Créer un billet',
   ViewTicket: 'Voir le billet',
+  Assign: 'Affecter à',
 
   // Alert actions
   TextIsRequired: 'Text is required',

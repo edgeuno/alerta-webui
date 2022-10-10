@@ -677,6 +677,7 @@ export default {
     handleCheckAlert(e) {
       const value = e.target.checked
       if (value) this.multiselect = true
+      this.$store.commit('alerts/SET_ALERT', {})
       this.$emit('bulk-actions', this.multiselect)
     },
     selectAll(e) {

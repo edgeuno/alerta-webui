@@ -88,6 +88,26 @@
 
           <v-spacer />
           <v-flex
+            xs12
+            class="py-0 px-1"
+          >
+            <v-btn
+              slot="activator"
+              block
+              depressed
+              @click="assignAlert"
+            >
+              <span>{{ $t('Assign') }}</span>
+              <v-icon
+                size="20px"
+                class="ml-1"
+              >
+                person
+              </v-icon>
+            </v-btn>
+          </v-flex>
+
+          <v-flex
             xs6
             class="py-0 px-1"
           >
@@ -277,6 +297,7 @@
 
 <script>
 import { bus } from '@/common/bus.ts'
+import debounce from 'lodash/debounce'
 
 export default {
   props: {
@@ -329,6 +350,9 @@ export default {
     },
   },
   methods: {
+    assignAlert() {
+      bus.$emit('toggle-assign-to', true)
+    },
     takeBulkAction(actionStr) {
       bus.$emit('take-bulk-action', actionStr)
     },

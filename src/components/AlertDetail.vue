@@ -284,6 +284,7 @@
           @add-note="toggleNoteDialog(true)"
           @delete-alert="deleteAlert"
           @create-ticket="createTicket"
+          @assign-to="assignAlert"
         />
         <v-tabs
           v-model="active"
@@ -1490,6 +1491,9 @@ export default {
       this.toggleNoteDialog(true)
       this.$store.commit('alerts/SET_NOTE_BEFORE_ACK', true)
     },
+    assignAlert: debounce(function() {
+      this.$store.dispatch('alerts/setAssignTo', true)
+    }, 200, {leading: true, trailing: false}),
     createTicket: debounce(function(id) {
       this.$store
         .dispatch('alerts/createTicket', id)

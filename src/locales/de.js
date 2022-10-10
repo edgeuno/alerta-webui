@@ -76,6 +76,7 @@ export const de = {
   Delete: 'Löschen',
   CreateTicket: 'Ticket erstellen',
   ViewTicket: 'Ticket ansehen',
+  Assign: 'Zuweisen',
 
   // Alert actions
   TextIsRequired: 'Text ist erforderlich',

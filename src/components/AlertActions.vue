@@ -14,6 +14,13 @@
         >
           <div>
             <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="assignAlert"
+            >
+              <v-icon>person</v-icon>&nbsp;{{ $t('Assign') }}
+            </v-btn>
+            <v-btn
               v-show="!isWatched"
               outline
               :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
@@ -244,6 +251,10 @@ export default {
     }
   },
   methods: {
+    assignAlert: debounce(function(action) {
+      this.$emit('assign-to', this.id)
+      this.close()
+    }, 200, {leading: true, trailing: false}),
     takeAction: debounce(function(action) {
       this.$emit('take-action', this.id, action, this.text)
       this.close()

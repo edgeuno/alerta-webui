@@ -76,6 +76,7 @@ export const en = {
   Delete: 'Delete',
   CreateTicket: 'Create Ticket',
   ViewTicket: 'View Ticket',
+  Assign: 'Assign To',
 
   // Alert actions
   TextIsRequired: 'Text is required',

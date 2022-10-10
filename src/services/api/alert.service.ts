@@ -131,5 +131,8 @@ export default {
     return api.post('webhooks/tickets', {
       alert_id: alertId
     })
+  },
+  assignTo(data: { alert_id: string, assign_to: string }) {
+    return api.post('webhooks/assignment', data)
   }
 }

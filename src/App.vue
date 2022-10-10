@@ -301,6 +301,12 @@
       @close="toggleNoteDialog(false); $store.commit('alerts/SET_NOTE_BEFORE_ACK', false)"
       @add-note="addAlertNote"
     />
+
+    <assign-to-dialog
+      :is-visible="isAssignTo"
+      @assign-to="assignTo"
+      @close="isAssignTo = false"
+    />
     <notes-dialog @delete-note="handleDeleteNote" />
   </v-app>
 </template>
@@ -321,7 +327,8 @@ export default {
     ProfileMe,
     Snackbar,
     NotesDialog,
-    AlertAddNoteDialog: AlertAddNote
+    AlertAddNoteDialog: AlertAddNote,
+    AssignToDialog: () => import('@/components/AssignToDialog.vue')
   },
   props: [],
   data: () => ({
@@ -527,6 +534,14 @@ export default {
     },
     avatar() {
       return this.$store.getters['auth/getAvatar']
+    },
+    isAssignTo: {
+      get() {
+        return this.$store.state.alerts.isDisplayAssignDialog
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/setAssignTo', bool)
+      }
     }
   },
   watch: {
@@ -551,6 +566,7 @@ export default {
     bus.$on('toggle-watch', this.toggleWatch)
     bus.$on('bulk-add-note', this.bulkAddNote)
     bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
+    bus.$on('toggle-assign-to', this.toggleAssignTo)
   },
   
   beforeDestroy() {
@@ -560,10 +576,18 @@ export default {
     bus.$off('toggle-watch', this.toggleWatch)
     bus.$off('bulk-add-note', this.bulkAddNote)
     bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
+    bus.$off('toggle-assign-to', this.toggleAssignTo)
+
   },
   methods: {
+    toggleAssignTo(bool) {
+      this.isAssignTo = bool
+    },
     bulkAddNote() {
       this.toggleNoteDialog(true)
+    },
+    assignTo(data) {
+      this.$store.dispatch('alerts/assignAlert', data)
     },
     addAlertNote(data) {
       this.selected.length > 1 ? this.bulkAckAlert(data) : this.addSingleNote(data)
