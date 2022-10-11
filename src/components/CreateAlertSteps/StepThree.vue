@@ -42,7 +42,7 @@
           <v-text-field
             :value="data.timeout"
             type="number"
-            suffix="ms"
+            suffix="seconds"
             label="timeout"
             name="timeout"
             hide-details
