@@ -102,7 +102,7 @@
                 size="20px"
                 class="ml-1"
               >
-                person
+                warning
               </v-icon>
             </v-btn>
           </v-flex>
