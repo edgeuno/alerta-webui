@@ -235,9 +235,18 @@ const actions = {
   displayNotes({commit}, bool) {
     commit('DISPLAY_NOTES', bool)
   },
+  
 
   setChangeSeverity({commit}, bool) {
     commit('DISPLAY_CHANGE_SEVERITY', bool)
+  },
+
+  async changeSeverity({dispatch}, { alerts, severity }: {alerts: Array<{id: string}>; severity: string}) {
+    for (let alert of alerts) {
+      await AlertsApi.setSeverity( {alert_id: alert.id, severity }).then(() => {
+        dispatch('notifications/success', 'Alert updated correctly!', {root: true})
+      })
+    }
   },
 
   setAssignTo({commit}, bool) {

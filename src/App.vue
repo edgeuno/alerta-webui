@@ -307,6 +307,11 @@
       @assign-to="assignTo"
       @close="isAssignTo = false"
     />
+    <alert-change-severity-dialog
+      :is-visible="isChangeSeverityDialog"
+      @change-severity="changeSeverity"
+      @close="isChangeSeverityDialog = false"
+    />
     <notes-dialog @delete-note="handleDeleteNote" />
   </v-app>
 </template>
@@ -328,7 +333,8 @@ export default {
     Snackbar,
     NotesDialog,
     AlertAddNoteDialog: AlertAddNote,
-    AssignToDialog: () => import('@/components/AssignToDialog.vue')
+    AssignToDialog: () => import('@/components/AssignToDialog.vue'),
+    AlertChangeSeverityDialog: () => import('@/components/AlertChangeSeverityDialog.vue'),
   },
   props: [],
   data: () => ({
@@ -542,6 +548,14 @@ export default {
       set(bool) {
         return this.$store.dispatch('alerts/setAssignTo', bool)
       }
+    },
+    isChangeSeverityDialog: {
+      get() {
+        return this.$store.state.alerts.isDisplayChangeSeverity
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/setChangeSeverity', bool)
+      }
     }
   },
   watch: {
@@ -585,6 +599,9 @@ export default {
     },
     bulkAddNote() {
       this.toggleNoteDialog(true)
+    },
+    changeSeverity(data) {
+      this.$store.dispatch('alerts/changeSeverity', data)
     },
     assignTo(data) {
       this.$store.dispatch('alerts/assignAlert', data)

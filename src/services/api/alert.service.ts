@@ -135,7 +135,7 @@ export default {
   assignTo(data: { alert_id: string, assign_to: string }) {
     return api.post('webhooks/assignment', data)
   },
-  setSeverity(severity) {
-    return api.post('webhooks/severity', { severity })
+  setSeverity(data: { alert_id: string, severity: string }) {
+    return api.post('webhooks/severity', data)
   }
 }
