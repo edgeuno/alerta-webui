@@ -91,7 +91,7 @@ export default {
   },
   watch: {
     visibility() {
-      if (!'attributes' in this.currentAlert) return
+      if (!this.currentAlert || !this.currentAlert.attributes) return
       const severity = this.currentAlert.attributes.severity_raw ? this.currentAlert.attributes.severity_raw : this.currentAlert.severity 
       this.checkValue(severity)
     }

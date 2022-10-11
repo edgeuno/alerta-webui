@@ -327,7 +327,7 @@
                             {{ $t('Severity') }}
                           </h3>
                           <div>
-                            <template v-if="'severity_raw' in item.attributes">
+                            <template v-if="item.attributes && item.attributes.severity_raw">
                               <template v-if="item.attributes.previous_severity_raw">
                                 <span :class="['label', 'label-' + item.attributes.previous_severity_raw]">
                                   {{ item.attributes.previous_severity_raw | capitalize }}
