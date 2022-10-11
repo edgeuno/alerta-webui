@@ -77,6 +77,7 @@ export const de = {
   CreateTicket: 'Ticket erstellen',
   ViewTicket: 'Ticket ansehen',
   Assign: 'Zuweisen',
+  ChangeSeverity: 'Schweregrad ändern',
 
   // Alert actions
   TextIsRequired: 'Text ist erforderlich',

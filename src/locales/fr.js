@@ -77,6 +77,7 @@ export const fr = {
   CreateTicket: 'Créer un billet',
   ViewTicket: 'Voir le billet',
   Assign: 'Affecter à',
+  ChangeSeverity: 'Modifier la gravité',
 
   // Alert actions
   TextIsRequired: 'Text is required',
