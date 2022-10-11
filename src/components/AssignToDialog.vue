@@ -89,9 +89,6 @@ export default {
     usersAvailable() {
       return this.$store.state.users.users
     },
-    alertAssignedTo() {
-      return this.$store.state.alerts.alert
-    }
   },
   watch: {
     visibility() {
