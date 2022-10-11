@@ -77,6 +77,7 @@ export const en = {
   CreateTicket: 'Create Ticket',
   ViewTicket: 'View Ticket',
   Assign: 'Assign To',
+  ChangeSeverity: 'Change Severity',
 
   // Alert actions
   TextIsRequired: 'Text is required',

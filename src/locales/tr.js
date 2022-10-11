@@ -77,6 +77,7 @@ export const tr = {
   CreateTicket: 'Bilet Oluştur',
   ViewTicket: 'Bileti görüntüle',
   Assign: 'Atamak',
+  ChangeSeverity: 'Önem Derecesini Değiştir',
 
   // Alert actions
   TextIsRequired: 'Metin zorunludur',

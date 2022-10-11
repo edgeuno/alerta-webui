@@ -10,7 +10,7 @@
         class="headline grey"
         primary-title
       >
-        {{ $t('Assign') }}
+        {{ $t('ChangeSeverity') }}
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -21,12 +21,9 @@
             @submit="validate"
           >
             <v-select
-              v-model="assignedTo"
-              :items="usersAvailable"
-              item-disabled="disabled"
-              item-value="name"
-              item-text="name"
-              :label="$t('User')"
+              v-model="severity"
+              :items="severitiesAvailable"
+              :label="$t('Severity')"
             />
             <v-flex xs12>
               <v-btn
@@ -53,22 +50,24 @@
 </template>
 
 <script>
+import i18n from '@/plugins/i18n'
+import debounce from 'lodash/debounce'
+
 export default {
   props: {
     isVisible: {
       type: Boolean,
       required: true
-    },
-    value: {
-      type: String,
-      default: () => '',
     }
   },
   data: () => ({
-    assignedTo: '',
-    valid: false,
+    severity: '',
+    valid: false, 
   }),
   computed: {
+    severitiesAvailable() {
+      return Object.keys(this.$config.alarm_model.severity)
+    },
     visibility: {
       get() {
         return this.isVisible
@@ -86,32 +85,28 @@ export default {
     selected() {
       return this.$store.state.alerts.selected
     },
-    usersAvailable() {
-      return this.$store.state.users.users
-    },
   },
   watch: {
     visibility() {
-      if (!this.usersAvailable.length) this.getUsers()
-      if (this.currentAlertId) {
-        this.assignedTo = this.currentAlert.attributes.assign_to
-      }
+      this.checkValue(this.currentAlert.severity)
     }
   },
   methods: {
-    getUsers() {
-      this.$store.dispatch('users/getUsers')
+    checkValue(value) {
+      if (value && this.severitiesAvailable.includes(value.toLowerCase())) {
+        this.severity = value
+      }
     },
     validate() {
       if (this.$refs.form.validate()) this.closeAndSave()
     },
     closeAndSave() {
       const alerts = this.currentAlertId ? [{ id: this.currentAlertId }] : this.selected
-      this.$emit('assign-to', { assignedTo: this.assignedTo, alerts })
+      this.$emit('change-severity', { severity: this.severity, alerts })
       this.close()
     },
     close() {
-      this.assignedTo = ''
+      this.severity = ''
       this.$emit('close', null)
     }
   }

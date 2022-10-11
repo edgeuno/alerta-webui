@@ -307,6 +307,11 @@
       @assign-to="assignTo"
       @close="isAssignTo = false"
     />
+    <alert-change-severity-dialog
+      :is-visible="isChangeSeverityDialog"
+      @change-severity="changeSeverity"
+      @close="isChangeSeverityDialog = false"
+    />
     <notes-dialog @delete-note="handleDeleteNote" />
   </v-app>
 </template>
@@ -328,7 +333,8 @@ export default {
     Snackbar,
     NotesDialog,
     AlertAddNoteDialog: AlertAddNote,
-    AssignToDialog: () => import('@/components/AssignToDialog.vue')
+    AssignToDialog: () => import('@/components/AssignToDialog.vue'),
+    AlertChangeSeverityDialog: () => import('@/components/AlertChangeSeverityDialog.vue'),
   },
   props: [],
   data: () => ({
@@ -542,6 +548,14 @@ export default {
       set(bool) {
         return this.$store.dispatch('alerts/setAssignTo', bool)
       }
+    },
+    isChangeSeverityDialog: {
+      get() {
+        return this.$store.state.alerts.isDisplayChangeSeverity
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/setChangeSeverity', bool)
+      }
     }
   },
   watch: {
@@ -567,6 +581,7 @@ export default {
     bus.$on('bulk-add-note', this.bulkAddNote)
     bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
     bus.$on('toggle-assign-to', this.toggleAssignTo)
+    bus.$on('set-change-severity', this.toggleChangeSeverity)
   },
   
   beforeDestroy() {
@@ -577,14 +592,21 @@ export default {
     bus.$off('bulk-add-note', this.bulkAddNote)
     bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
     bus.$off('toggle-assign-to', this.toggleAssignTo)
+    bus.$off('set-change-severity', this.toggleChangeSeverity)
 
   },
   methods: {
     toggleAssignTo(bool) {
       this.isAssignTo = bool
     },
+    toggleChangeSeverity(bool) {
+      this.isChangeSeverityDialog = bool
+    },
     bulkAddNote() {
       this.toggleNoteDialog(true)
+    },
+    changeSeverity(data) {
+      this.$store.dispatch('alerts/changeSeverity', data)
     },
     assignTo(data) {
       this.$store.dispatch('alerts/assignAlert', data)

@@ -21,6 +21,13 @@
               <v-icon>person</v-icon>&nbsp;{{ $t('Assign') }}
             </v-btn>
             <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="changeSeverity"
+            >
+              <v-icon>warning</v-icon>&nbsp;{{ $t('ChangeSeverity') }}
+            </v-btn>
+            <v-btn
               v-show="!isWatched"
               outline
               :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
@@ -251,6 +258,10 @@ export default {
     }
   },
   methods: {
+    changeSeverity: debounce(function(action) {
+      this.$emit('change-severity', this.id)
+      this.close()
+    }, 200, {leading: true, trailing: false}),
     assignAlert: debounce(function(action) {
       this.$emit('assign-to', this.id)
       this.close()
