@@ -327,21 +327,23 @@
                             {{ $t('Severity') }}
                           </h3>
                           <div>
-                            <template v-if="item.attributes.previous_severity_raw">
-                              <span :class="['label', 'label-' + item.attributes.previous_severity_raw]">
-                                {{ item.attributes.previous_severity_raw | capitalize }}
-                              </span>&nbsp;&rarr;&nbsp;
-                              <span :class="['label', 'label-' + item.attributes.severity_raw]">
-                                {{ item.attributes.severity_raw | capitalize }}
-                              </span>
-                            </template>
-                            <template v-else-if="item.attributes.severity_raw">
-                              <span :class="['label', 'label-' + item.severity]">
-                                {{ item.severity | capitalize }}
-                              </span>&nbsp;&rarr;&nbsp;
-                              <span :class="['label', 'label-' + item.attributes.severity_raw]">
-                                {{ item.attributes.severity_raw | capitalize }}
-                              </span>
+                            <template v-if="item.attributes">
+                              <template v-if="item.attributes.previous_severity_raw">
+                                <span :class="['label', 'label-' + item.attributes.previous_severity_raw]">
+                                  {{ item.attributes.previous_severity_raw | capitalize }}
+                                </span>&nbsp;&rarr;&nbsp;
+                                <span :class="['label', 'label-' + item.attributes.severity_raw]">
+                                  {{ item.attributes.severity_raw | capitalize }}
+                                </span>
+                              </template>
+                              <template v-else-if="item.attributes.severity_raw">
+                                <span :class="['label', 'label-' + item.severity]">
+                                  {{ item.severity | capitalize }}
+                                </span>&nbsp;&rarr;&nbsp;
+                                <span :class="['label', 'label-' + item.attributes.severity_raw]">
+                                  {{ item.attributes.severity_raw | capitalize }}
+                                </span>
+                              </template>
                             </template>
                             <template v-else>
                               <span :class="['label', 'label-' + item.previousSeverity]">
