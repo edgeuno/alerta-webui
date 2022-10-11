@@ -95,6 +95,26 @@
               slot="activator"
               block
               depressed
+              @click="changeSeverity"
+            >
+              <span>{{ $t('ChangeSeverity') }}</span>
+              <v-icon
+                size="20px"
+                class="ml-1"
+              >
+                person
+              </v-icon>
+            </v-btn>
+          </v-flex>
+
+          <v-flex
+            xs12
+            class="py-0 px-1"
+          >
+            <v-btn
+              slot="activator"
+              block
+              depressed
               @click="assignAlert"
             >
               <span>{{ $t('Assign') }}</span>
@@ -350,6 +370,9 @@ export default {
     },
   },
   methods: {
+    changeSeverity() {
+      bus.$emit('set-change-severity', true)
+    },
     assignAlert() {
       bus.$emit('toggle-assign-to', true)
     },

@@ -581,6 +581,7 @@ export default {
     bus.$on('bulk-add-note', this.bulkAddNote)
     bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
     bus.$on('toggle-assign-to', this.toggleAssignTo)
+    bus.$on('set-change-severity', this.toggleChangeSeverity)
   },
   
   beforeDestroy() {
@@ -591,11 +592,15 @@ export default {
     bus.$off('bulk-add-note', this.bulkAddNote)
     bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
     bus.$off('toggle-assign-to', this.toggleAssignTo)
+    bus.$off('set-change-severity', this.toggleChangeSeverity)
 
   },
   methods: {
     toggleAssignTo(bool) {
       this.isAssignTo = bool
+    },
+    toggleChangeSeverity(bool) {
+      this.isChangeSeverityDialog = bool
     },
     bulkAddNote() {
       this.toggleNoteDialog(true)
