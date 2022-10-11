@@ -327,12 +327,30 @@
                             {{ $t('Severity') }}
                           </h3>
                           <div>
-                            <span :class="['label', 'label-' + item.previousSeverity]">
-                              {{ item.previousSeverity | capitalize }}
-                            </span>&nbsp;&rarr;&nbsp;
-                            <span :class="['label', 'label-' + item.severity]">
-                              {{ item.severity | capitalize }}
-                            </span>
+                            <template v-if="item.attributes.severity_raw">
+                              <span :class="['label', 'label-' + item.attributes.severity_raw]">
+                                {{ item.attributes.severity_raw | capitalize }}
+                              </span>&nbsp;&rarr;&nbsp;
+                              <template v-if="item.attributes.previous_severity_raw">
+                                <span :class="['label', 'label-' + item.attributes.previous_severity_raw]">
+                                  {{ item.attributes.previous_severity_raw | capitalize }}
+                                </span>
+                              </template>
+                              <span
+                                v-else
+                                :class="['label', 'label-' + item.severity]"
+                              >
+                                {{ item.severity | capitalize }}
+                              </span>
+                            </template>
+                            <template v-else>
+                              <span :class="['label', 'label-' + item.previousSeverity]">
+                                {{ item.previousSeverity | capitalize }}
+                              </span>&nbsp;&rarr;&nbsp;
+                              <span :class="['label', 'label-' + item.severity]">
+                                {{ item.severity | capitalize }}
+                              </span>
+                            </template>
                           </div>
                         </section>
                         <v-divider class="my-2" />
