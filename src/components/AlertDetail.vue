@@ -285,6 +285,7 @@
           @delete-alert="deleteAlert"
           @create-ticket="createTicket"
           @assign-to="assignAlert"
+          @change-severity="changeSeverity"
         />
         <v-tabs
           v-model="active"
@@ -1491,6 +1492,9 @@ export default {
       this.toggleNoteDialog(true)
       this.$store.commit('alerts/SET_NOTE_BEFORE_ACK', true)
     },
+    changeSeverity: debounce(function() {
+      this.$store.dispatch('alerts/setChangeSeverity', true)
+    }, 200, {leading: true, trailing: false}),
     assignAlert: debounce(function() {
       this.$store.dispatch('alerts/setAssignTo', true)
     }, 200, {leading: true, trailing: false}),

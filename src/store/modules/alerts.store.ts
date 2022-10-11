@@ -27,6 +27,7 @@ const state = {
   isDisplayNotes: false,
   isAddNoteBeforeAck: false,
   isDisplayAssignDialog: false,
+  isDisplayChangeSeverity: false,
   displayDensity: 'comfortable', // 'comfortable' or 'compact'
 
   // query, filter and pagination
@@ -117,6 +118,9 @@ const mutations = {
   },
   DISPLAY_ASSIGN_TO(state, bool) {
     state.isDisplayAssignDialog = bool
+  },
+  DISPLAY_CHANGE_SEVERITY(state, bool) {
+    state.isDisplayChangeSeverity = bool
   }
 }
 
@@ -230,6 +234,10 @@ const actions = {
   },
   displayNotes({commit}, bool) {
     commit('DISPLAY_NOTES', bool)
+  },
+
+  setChangeSeverity({commit}, bool) {
+    commit('DISPLAY_CHANGE_SEVERITY', bool)
   },
 
   setAssignTo({commit}, bool) {
