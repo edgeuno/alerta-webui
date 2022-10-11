@@ -24,12 +24,15 @@
               v-model="severity"
               :items="severitiesAvailable"
               :label="$t('Severity')"
+              hint="Remember that changing the severity of an alert to ok/cleared doesn't mean that is acked."
+              persistent-hint
             />
-            <v-flex xs12>
+            <v-flex xs12 class="mt-2">
               <v-btn
                 :disabled="!valid"
                 color="success"
                 type="submit"
+                class="ml-0"
                 @click.stop.prevent="validate"
               >
                 {{ $t('Send') }}

@@ -33,6 +33,7 @@
                 :disabled="!valid"
                 color="success"
                 type="submit"
+                class="ml-0"
                 @click.stop.prevent="validate"
               >
                 {{ $t('Send') }}

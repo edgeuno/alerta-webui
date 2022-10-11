@@ -57,7 +57,7 @@
         slot-scope="props"
       >
         <tr
-          :style="{ 'background-color': severityColor(props.item.severity) }"
+          :style="{ 'background-color': severityColor(props.item.attributes.severity_raw ? props.item.attributes.severity_raw : props.item.severity) }"
           class="hover-lighten"
           @click="selectItem(props.item)"
         >
@@ -323,7 +323,7 @@
           >
             <div
               class="action-buttons"
-              :style="{ 'background-color': severityColor(props.item.severity) }"
+              :style="{ 'background-color': severityColor(props.item.attributes.severity_raw ? props.item.attributes.severity_raw : props.item.severity) }"
             >
               ...&nbsp;
               <v-btn
