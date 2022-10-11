@@ -88,7 +88,9 @@ export default {
   },
   watch: {
     visibility() {
-      this.checkValue(this.currentAlert.severity)
+      if (!this.currentAlert) return
+      const severity = this.currentAlert.attributes.severity_raw ? this.currentAlert.attributes.severity_raw : this.currentAlert.severity 
+      this.checkValue(severity)
     }
   },
   methods: {
