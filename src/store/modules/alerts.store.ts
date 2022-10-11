@@ -241,10 +241,12 @@ const actions = {
     commit('DISPLAY_CHANGE_SEVERITY', bool)
   },
 
-  async changeSeverity({dispatch}, { alerts, severity }: {alerts: Array<{id: string}>; severity: string}) {
+  async changeSeverity({ commit }, { alerts, severity }: {alerts: Array<{id: string}>; severity: string}) {
     for (let alert of alerts) {
-      await AlertsApi.setSeverity( {alert_id: alert.id, severity }).then(() => {
-        dispatch('notifications/success', 'Alert updated correctly!', {root: true})
+      await AlertsApi.setSeverity( {alert_id: alert.id, severity }).then((res) => {
+        if (alerts.length <= 1) {
+          commit('SET_ALERT', res.alert)
+        }
       })
     }
   },
@@ -252,11 +254,13 @@ const actions = {
   setAssignTo({commit}, bool) {
     commit('DISPLAY_ASSIGN_TO', bool)
   },
-
-  async assignAlert({dispatch}, {alerts, assignedTo}: {alerts: Array<{id: string}>; assignedTo: string}) {
+  
+  async assignAlert({ commit }, {alerts, assignedTo}: {alerts: Array<{id: string}>; assignedTo: string}) {
     for (let alert of alerts) {
-      await AlertsApi.assignTo({alert_id: alert.id, assign_to: assignedTo}).then(() => {
-        dispatch('notifications/success', 'Alert assigned correctly!', {root: true})
+      await AlertsApi.assignTo({alert_id: alert.id, assign_to: assignedTo}).then((res) => {
+        if (alerts.length <= 1) {
+          commit('SET_ALERT', res.alert)
+        }
       })
     }
   },

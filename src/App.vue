@@ -606,10 +606,22 @@ export default {
       this.toggleNoteDialog(true)
     },
     changeSeverity(data) {
-      this.$store.dispatch('alerts/changeSeverity', data)
+      this.$store.dispatch('alerts/changeSeverity', data).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Severity changed correctly!',
+          { root: true }
+        )
+      })
     },
     assignTo(data) {
-      this.$store.dispatch('alerts/assignAlert', data)
+      this.$store.dispatch('alerts/assignAlert', data).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Alert assigned correctly!',
+          { root: true }
+        )
+      })
     },
     addAlertNote(data) {
       this.selected.length > 1 ? this.bulkAckAlert(data) : this.addSingleNote(data)
