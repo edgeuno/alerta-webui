@@ -1,3 +1,19 @@
+## v8.8.1 (2022-10-12)
+## Changes
+- Added assign to a user for each alert
+- Added change severity for alerts (Remember that changing the severity of an alert to ok/cleared doesn't mean that is acked.)
+- Added ticket  button creation on the alert
+- Added multiple column sorting
+- Added notes to multiple alerts
+- Added requirement for a note when acknowledge is set
+- Added auto-ack for the source alert
+- Change the bulk top bar for a sidebar
+- Added feedback notification when an action is executed (i.e create a note, acknowledge and alert, etc ... )
+- Change the alert detail interface 
+- Change the position for the delete button for alert details
+- Change the way the notes are viewed/created
+
+
 ## v8.4.0 (2021-01-05)
 
 ### Fix
