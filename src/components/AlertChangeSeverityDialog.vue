@@ -24,7 +24,7 @@
               v-model="severity"
               :items="severitiesAvailable"
               :label="$t('Severity')"
-              hint="Remember that changing the severity of an alert to ok/cleared doesn't mean that is acked."
+              hint="Remember that changing the severity of an alert to ok/cleared doesn't mean that is going to be deleted."
               persistent-hint
             />
             <v-flex xs12 class="mt-2">
