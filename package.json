@@ -1,10 +1,11 @@
 {
   "name": "alerta-webui",
-  "version": "8.7.0",
+  "version": "8.8.0",
   "private": true,
   "description": "Alerta web UI",
   "scripts": {
     "serve": "vue-cli-service serve --port 8000",
+    "dev": "vue-cli-service serve --port 8000",
     "build": "vue-cli-service build  && cp -r dist/* build",
     "format": "prettier --write '**/*.ts'",
     "format-check": "prettier --check '**/*.ts'",

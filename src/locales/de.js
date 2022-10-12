@@ -61,6 +61,7 @@ export const de = {
   Unknown: 'Unbekannt',
   NotValid: 'Nicht gültig',
 
+  BulkActions: 'Massenaktionen',
   // operator actions
   Open: 'Öffen',
   Assign: 'Zuweisen',
@@ -73,6 +74,10 @@ export const de = {
   Unwatch: 'Nicht beobachten',
   AddNote: 'Notiz hinzufügen',
   Delete: 'Löschen',
+  CreateTicket: 'Ticket erstellen',
+  ViewTicket: 'Ticket ansehen',
+  Assign: 'Zuweisen',
+  ChangeSeverity: 'Schweregrad ändern',
 
   // Alert actions
   TextIsRequired: 'Text ist erforderlich',

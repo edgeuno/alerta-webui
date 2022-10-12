@@ -61,6 +61,7 @@ export const tr = {
   Unknown: 'Bilinmeyen',
   NotValid: 'Geçersiz',
 
+  BulkActions: 'Toplu eylemler',
   // operator actions
   Open: 'Aç',
   Assign: 'Ata',
@@ -73,6 +74,10 @@ export const tr = {
   Unwatch: 'İzleme kaldır',
   AddNote: 'Not ekle',
   Delete: 'Sil',
+  CreateTicket: 'Bilet Oluştur',
+  ViewTicket: 'Bileti görüntüle',
+  Assign: 'Atamak',
+  ChangeSeverity: 'Önem Derecesini Değiştir',
 
   // Alert actions
   TextIsRequired: 'Metin zorunludur',

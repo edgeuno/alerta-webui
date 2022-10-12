@@ -61,6 +61,7 @@ export const en = {
   Unknown: 'Unknown',
   NotValid: 'Not Valid',
 
+  BulkActions: 'Bulk Actions',
   // operator actions
   Open: 'Open',
   Assign: 'Assign',
@@ -73,6 +74,10 @@ export const en = {
   Unwatch: 'Unwatch',
   AddNote: 'Add note',
   Delete: 'Delete',
+  CreateTicket: 'Create Ticket',
+  ViewTicket: 'View Ticket',
+  Assign: 'Assign To',
+  ChangeSeverity: 'Change Severity',
 
   // Alert actions
   TextIsRequired: 'Text is required',

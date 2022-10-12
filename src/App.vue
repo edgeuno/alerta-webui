@@ -100,7 +100,6 @@
       </v-navigation-drawer>
 
       <v-toolbar
-        v-if="selected.length == 0"
         :color="isDark ? '#616161' : '#eeeeee'"
         flat
         class="mb-1"
@@ -136,6 +135,7 @@
           prepend-inner-icon="search"
           solo
           clearable
+          :disabled="Boolean(selected.length)"
           height="44"
           class="pt-2 mr-3 hidden-sm-and-down"
           @focus="hasFocus = true"
@@ -149,6 +149,7 @@
             >
               <template v-slot:activator="{ on }">
                 <v-icon
+                  :disabled="Boolean(selected.length)"
                   v-on="on"
                   @click="saveSearch"
                 >
@@ -169,6 +170,7 @@
               slot="activator"
               :input-value="isWatch"
               hide-details
+              :disabled="Boolean(selected.length)"
               open-delay="3000"
               @change="toggle('isWatch', $event)"
             />
@@ -256,212 +258,6 @@
           </v-btn>
         </span>
       </v-toolbar>
-
-      <v-toolbar
-        v-if="selected.length > 0"
-        :color="isDark ? '#8e8e8e' : '#bcbcbc'"
-        class="mb-1"
-      >
-        <v-btn
-          icon
-          @click="clearSelected"
-        >
-          <v-icon>arrow_back</v-icon>
-        </v-btn>
-        <span class="hidden-sm-and-down">
-          <v-toolbar-title>
-            Back
-          </v-toolbar-title>
-        </span>
-        <v-spacer />
-
-        <span class="subheading">
-          {{ selected.length }}<span class="hidden-sm-and-down"> {{ $t('selected') }}</span>
-        </span>
-
-        <v-spacer />
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="toggleWatch()"
-          >
-            <v-icon>
-              visibility
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Watch') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="bulkAckAlert()"
-          >
-            <v-icon>
-              check
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Ack') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="bulkShelveAlert()"
-          >
-            <v-icon>
-              schedule
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Shelve') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="takeBulkAction('close')"
-          >
-            <v-icon>
-              highlight_off
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Close') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            slot="activator"
-            icon
-            class="btn--plain"
-            @click="bulkDeleteAlert()"
-          >
-            <v-icon>
-              delete
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Delete') }}</span>
-        </v-tooltip>
-
-        <v-menu
-          bottom
-          left
-        >
-          <v-btn
-            slot="activator"
-            flat
-            icon
-            small
-            class="btn--plain px-1 mx-0"
-          >
-            <v-icon small>
-              more_vert
-            </v-icon>
-          </v-btn>
-
-          <v-list
-            subheader
-          >
-            <v-subheader>Actions</v-subheader>
-            <v-divider />
-            <v-list-tile
-              v-for="(action, i) in actions"
-              :key="i"
-              @click="takeBulkAction(action)"
-            >
-              <v-list-tile-title>{{ action | splitCaps }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
-
-        <v-spacer />
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isLoggedIn || !isAuthRequired || isAllowReadonly"
-            slot="activator"
-            icon
-            @click="toggleFullScreen"
-          >
-            <v-icon>{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</v-icon>
-          </v-btn>
-          <span>{{ $t('FullScreen') }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <v-btn
-            v-show="isLoggedIn || !isAuthRequired || isAllowReadonly"
-            slot="activator"
-            icon
-          >
-            <v-icon @click="refresh">
-              refresh
-            </v-icon>
-          </v-btn>
-          <span>{{ $t('Refresh') }}</span>
-        </v-tooltip>
-
-        <v-menu
-          v-show="isLoggedIn"
-          v-model="menu"
-          :close-on-content-click="false"
-          :nudge-width="200"
-          offset-x
-        >
-          <v-btn
-            slot="activator"
-            icon
-          >
-            <v-avatar
-              size="32px"
-            >
-              <img
-                v-if="avatar && !error"
-                :src="avatar"
-                @error="error = true"
-              >
-              <v-icon
-                v-else
-                v-text="navbar.signin.icon"
-              />
-            </v-avatar>
-          </v-btn>
-
-          <profile-me
-            v-if="profile"
-            :profile="profile"
-            @close="menu = false"
-          />
-        </v-menu>
-
-        <span class="hidden-xs-only">
-          <v-btn
-            v-show="!isLoggedIn && isSignupEnabled"
-            round
-            outline
-            color="primary"
-            disabled
-          >
-            {{ $t('SignUp') }}
-          </v-btn>
-          <v-btn
-            v-show="!isLoggedIn"
-            round
-            color="primary"
-            disabled
-          >
-            {{ $t('LogIn') }}
-          </v-btn>
-        </span>
-      </v-toolbar>
     </div>
 
     <v-content>
@@ -495,6 +291,28 @@
         </v-btn>
       </span>
     </div>
+
+    <alert-add-note-dialog
+      :id="currentAlertId"
+      :is-visible="isNoteDialog"
+      :status="currentAlertStatus"
+      :is-watched="isWatched(currentAlertTags)"
+      :value="isAcking ? 'ack' : 'note'"
+      @close="toggleNoteDialog(false); $store.commit('alerts/SET_NOTE_BEFORE_ACK', false)"
+      @add-note="addAlertNote"
+    />
+
+    <assign-to-dialog
+      :is-visible="isAssignTo"
+      @assign-to="assignTo"
+      @close="isAssignTo = false"
+    />
+    <alert-change-severity-dialog
+      :is-visible="isChangeSeverityDialog"
+      @change-severity="changeSeverity"
+      @close="isChangeSeverityDialog = false"
+    />
+    <notes-dialog @delete-note="handleDeleteNote" />
   </v-app>
 </template>
 
@@ -502,15 +320,21 @@
 import Banner from '@/components/lib/Banner.vue'
 import ProfileMe from '@/components/auth/ProfileMe.vue'
 import Snackbar from '@/components/lib/Snackbar.vue'
-
+import AlertAddNote from '@/components/AlertAddNote'
+import NotesDialog from '@/components/NotesDialog'
 import i18n from '@/plugins/i18n'
+import { bus } from '@/common/bus.ts'
 
 export default {
   name: 'App',
   components: {
     Banner,
     ProfileMe,
-    Snackbar
+    Snackbar,
+    NotesDialog,
+    AlertAddNoteDialog: AlertAddNote,
+    AssignToDialog: () => import('@/components/AssignToDialog.vue'),
+    AlertChangeSeverityDialog: () => import('@/components/AlertChangeSeverityDialog.vue'),
   },
   props: [],
   data: () => ({
@@ -631,6 +455,18 @@ export default {
         }
       ]
     },
+    isAcking() {
+      return this.$store.state.alerts.isAddNoteBeforeAck
+    },
+    currentAlertId() {
+      return this.$store.state.alerts.alert.id || ''
+    },
+    currentAlertTags() {
+      return this.$store.state.alerts.alert.tags || []
+    },
+    currentAlertStatus() {
+      return this.$store.state.alerts.alert.status || ''
+    },
     isDark() {
       return this.$store.getters.getPreference('isDark')
     },
@@ -654,6 +490,14 @@ export default {
     },
     isSignupEnabled() {
       return this.$config.signup_enabled
+    },
+    isNoteDialog: {
+      get() {
+        return this.$store.state.alerts.isNoteDialog
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/toggleNoteDialog', bool)
+      }
     },
     profile() {
       return this.$store.state.auth.payload || {}
@@ -696,6 +540,22 @@ export default {
     },
     avatar() {
       return this.$store.getters['auth/getAvatar']
+    },
+    isAssignTo: {
+      get() {
+        return this.$store.state.alerts.isDisplayAssignDialog
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/setAssignTo', bool)
+      }
+    },
+    isChangeSeverityDialog: {
+      get() {
+        return this.$store.state.alerts.isDisplayChangeSeverity
+      },
+      set(bool) {
+        return this.$store.dispatch('alerts/setChangeSeverity', bool)
+      }
     }
   },
   watch: {
@@ -713,8 +573,59 @@ export default {
       this.$store.dispatch('getUserPrefs')
       this.$store.dispatch('getUserQueries')
     }
+
+    bus.$on('take-bulk-action', this.takeBulkAction)
+    bus.$on('bulk-ack-alert', this.bulkAckAlert)
+    bus.$on('bulk-shelve-alert', this.bulkShelveAlert)
+    bus.$on('toggle-watch', this.toggleWatch)
+    bus.$on('bulk-add-note', this.bulkAddNote)
+    bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
+    bus.$on('toggle-assign-to', this.toggleAssignTo)
+    bus.$on('set-change-severity', this.toggleChangeSeverity)
+  },
+  
+  beforeDestroy() {
+    bus.$off('take-bulk-action', this.takeBulkAction)
+    bus.$off('bulk-ack-alert', this.bulkAckAlert)
+    bus.$off('bulk-shelve-alert', this.bulkShelveAlert)
+    bus.$off('toggle-watch', this.toggleWatch)
+    bus.$off('bulk-add-note', this.bulkAddNote)
+    bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
+    bus.$off('toggle-assign-to', this.toggleAssignTo)
+    bus.$off('set-change-severity', this.toggleChangeSeverity)
+
   },
   methods: {
+    toggleAssignTo(bool) {
+      this.isAssignTo = bool
+    },
+    toggleChangeSeverity(bool) {
+      this.isChangeSeverityDialog = bool
+    },
+    bulkAddNote() {
+      this.toggleNoteDialog(true)
+    },
+    changeSeverity(data) {
+      this.$store.dispatch('alerts/changeSeverity', data).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Severity changed correctly!',
+          { root: true }
+        )
+      })
+    },
+    assignTo(data) {
+      this.$store.dispatch('alerts/assignAlert', data).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Alert assigned correctly!',
+          { root: true }
+        )
+      })
+    },
+    addAlertNote(data) {
+      this.selected.length > 1 ? this.bulkAckAlert(data) : this.addSingleNote(data)
+    },
     submitSearch(query) {
       this.$store.dispatch('alerts/updateQuery', { q: query })
       this.$router.push({
@@ -750,19 +661,79 @@ export default {
       Promise.all(this.selected.map(a => this.$store.dispatch('alerts/takeAction', [a.id, action, '']))).then(() => {
         this.clearSelected()
         this.$store.dispatch('alerts/getAlerts')
+      }).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Bulk action executed correctly!',
+          { root: true }
+        )
+      }).catch(() => {
+        this.$store.dispatch(
+          'notifications/error',
+          'Something wrong happened',
+          { root: true }
+        )
       })
     },
-    bulkAckAlert() {
-      this.selected.map(a => {
-        this.$store
-          .dispatch('alerts/takeAction', [
-            a.id,
-            'ack',
-            '',
-            this.ackTimeout
-          ])
+    addSingleNote({ note, action, id }) {
+      try {
+        let alertId = id
+        if (alertId === '' && this.$store.state.alerts.isAddNoteBeforeAck) {
+          alertId = this.selected[0].id
+        }
+
+        this.$store.dispatch('alerts/addNote', [alertId, note]).then(() => {
+          this.$store.dispatch(
+            'notifications/success',
+            'Note added correctly!',
+            { root: true }
+          )
+        })
+
+        if (this.$store.state.alerts.isAddNoteBeforeAck) {
+          this.$store
+            .dispatch('alerts/takeAction', [alertId, action, note]).then(() => {
+              this.$store.dispatch(
+                'notifications/success',
+                'Note added correctly!',
+                { root: true }
+              )
+            })
+        }
+      } finally {
+        this.$nextTick(() =>  {
+          setTimeout(() => {
+            this.getNotes(id)
+          }, 200)
+        })
+      }
+    },
+    handleDeleteNote(noteId) {
+      this.$store.dispatch('alerts/deleteNote', [this.currentAlertId, noteId])
+    },
+    getNotes(id) {
+      this.$store.dispatch('alerts/getNotes', id)
+    },
+    toggleNoteDialog(bool) {
+      this.isNoteDialog = bool
+    },
+    bulkAckAlert(note) {
+      if (!note) {
+        alert('To bulk ack this alerts you need to first add a note :)')
+        this.$store.dispatch('alerts/setIsAddingNoteBeforeAck', true)
+        this.toggleNoteDialog(true)
+        return
+      }
+      
+      this.$store.dispatch('alerts/addBulkNotes', [this.selected, note]).then(() => {
+        this.clearSelected()
+        this.$store.dispatch(
+          'notifications/success',
+          'Notes added correctly!',
+          { root: true }
+        )
+        this.$store.dispatch('alerts/getAlerts')
       })
-        .reduce(() => this.clearSelected())
     },
     bulkShelveAlert() {
       Promise.all(this.selected.map(a => {
@@ -793,6 +764,12 @@ export default {
       Promise.all(map).then(() => {
         this.clearSelected()
         this.$store.dispatch('alerts/getAlerts')
+      }).then(() => {
+        this.$store.dispatch(
+          'notifications/success',
+          'Alerts are being watched!',
+          { root: true }
+        )
       })
     },
     watchAlert(id) {

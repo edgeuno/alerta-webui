@@ -139,6 +139,12 @@ export function createRouter(basePath): VueRouter {
         meta: {title: 'Logout'}
       },
       {
+        path: '/create-alert',
+        name: 'create-alert',
+        component: () => import(/* webpackChunkName: 'auth' */ './views/CreateAlert.vue'),
+        meta: {title: 'Create Alert'}
+      },
+      {
         path: '*',
         redirect: to => {
           // redirect hashbang mode links to HTML5 mode links

@@ -23,6 +23,11 @@ const state = {
   isWatch: false,
   isKiosk: false,
   showPanel: false,
+  isNoteDialog: false,
+  isDisplayNotes: false,
+  isAddNoteBeforeAck: false,
+  isDisplayAssignDialog: false,
+  isDisplayChangeSeverity: false,
   displayDensity: 'comfortable', // 'comfortable' or 'compact'
 
   // query, filter and pagination
@@ -101,10 +106,28 @@ const mutations = {
   },
   SET_PANEL(state, panel) {
     state.showPanel = panel
+  },
+  TOGGLE_NOTE_DIALOG(state, bool) {
+    state.isNoteDialog = bool
+  },
+  SET_NOTE_BEFORE_ACK(state, bool) {
+    state.isAddNoteBeforeAck = bool
+  },
+  DISPLAY_NOTES(state, bool) {
+    state.isDisplayNotes = bool
+  },
+  DISPLAY_ASSIGN_TO(state, bool) {
+    state.isDisplayAssignDialog = bool
+  },
+  DISPLAY_CHANGE_SEVERITY(state, bool) {
+    state.isDisplayChangeSeverity = bool
   }
 }
 
 const actions = {
+  addAlert({dispatch}, data) {
+    return AlertsApi.addAlert(data).then(_ => dispatch('getAlerts'))
+  },
   getAlerts({rootGetters, commit, state}) {
     commit('SET_LOADING')
     // get "lucene" query params (?q=)
@@ -176,6 +199,10 @@ const actions = {
     commit('SET_SELECTED', selected)
   },
 
+  toggleNoteDialog({commit}, bool) {
+    commit('TOGGLE_NOTE_DIALOG', bool)
+  },
+
   getAlert({commit}, alertId) {
     return AlertsApi.getAlert(alertId).then(({alert}) => {
       commit('SET_ALERT', alert)
@@ -205,10 +232,68 @@ const actions = {
   untagAlert({commit, dispatch}, [alertId, tags]) {
     return AlertsApi.untagAlert(alertId, tags)
   },
+  displayNotes({commit}, bool) {
+    commit('DISPLAY_NOTES', bool)
+  },
+  
 
+  setChangeSeverity({commit}, bool) {
+    commit('DISPLAY_CHANGE_SEVERITY', bool)
+  },
+
+  async changeSeverity({ commit }, { alerts, severity }: {alerts: Array<{id: string}>; severity: string}) {
+    for (let alert of alerts) {
+      await AlertsApi.setSeverity( {alert_id: alert.id, severity }).then((res) => {
+        if (alerts.length <= 1) {
+          commit('SET_ALERT', res.alert)
+        }
+      })
+    }
+  },
+
+  setAssignTo({commit}, bool) {
+    commit('DISPLAY_ASSIGN_TO', bool)
+  },
+  
+  async assignAlert({ commit }, {alerts, assignedTo}: {alerts: Array<{id: string}>; assignedTo: string}) {
+    for (let alert of alerts) {
+      await AlertsApi.assignTo({alert_id: alert.id, assign_to: assignedTo}).then((res) => {
+        if (alerts.length <= 1) {
+          commit('SET_ALERT', res.alert)
+        }
+      })
+    }
+  },
+
+  async createTicket({dispatch}, alertId) {
+    await AlertsApi.createTicket(alertId).then(() => {
+      dispatch('notifications/success', 'Ticket created correctly!', {root: true})
+    })
+  },
+
+  async addBulkNotes({dispatch, state}, [alerts, {note}]) {
+    try {
+      for (let alert of alerts) {
+        if (alert) {
+          if (state.isAddNoteBeforeAck) dispatch('takeAction', [alert.id, 'ack', note])
+          else dispatch('addNote', [alert.id, note])
+        }
+      }
+
+      dispatch('alerts/setIsAddingNoteBeforeAck', false)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      dispatch('getAlerts')
+      dispatch('updateSelected', [])
+    }
+  },
+  setIsAddingNoteBeforeAck({commit}, bool) {
+    commit('SET_NOTE_BEFORE_ACK', bool)
+  },
   addNote({commit, dispatch}, [alertId, text]) {
     return AlertsApi.addNote(alertId, {
-      text: text
+      text
     }).then(response => dispatch('getAlerts'))
   },
   getNotes({commit}, alertId) {

@@ -2,51 +2,96 @@
   <div>
     <v-container
       v-if="!showForm"
-      class="pa-1"
+      class="pa-1 py-2"
       fluid
     >
       <v-layout>
-        <v-flex>
-          <v-btn
-            v-show="!isWatched"
-            outline
-            color="grey darken-2"
-            @click="watchAlert"
-          >
-            <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
-          </v-btn>
-
-          <v-btn
-            v-show="isWatched"
-            outline
-            color="grey darken-2"
-            @click="unwatchAlert"
-          >
-            <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
-          </v-btn>
-
-          <v-btn
-            v-if="!showForm"
-            outline
-            color="grey darken-2"
-            @click="showForm = true"
-          >
-            <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
-          </v-btn>
-
-          <v-btn
-            outline
-            color="grey darken-2"
-            @click="deleteAlert"
-          >
-            <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
-          </v-btn>
+        <v-flex
+          d-flex
+          row
+          no-wrap
+          justify-space-between
+        >
+          <div>
+            <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="assignAlert"
+            >
+              <v-icon>person</v-icon>&nbsp;{{ $t('Assign') }}
+            </v-btn>
+            <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="changeSeverity"
+            >
+              <v-icon>warning</v-icon>&nbsp;{{ $t('ChangeSeverity') }}
+            </v-btn>
+            <v-btn
+              v-show="!isWatched"
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="watchAlert"
+            >
+              <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
+            </v-btn>
+  
+            <v-btn
+              v-show="isWatched"
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="unwatchAlert"
+            >
+              <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
+            </v-btn>
+  
+            <v-btn
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="$emit('add-note')"
+            >
+              <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
+            </v-btn>
+  
+            <v-btn
+              v-if="!alertHasTicket"
+              outline
+              :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              @click="createTicket"
+            >
+              <v-icon>confirmation_number</v-icon>&nbsp;{{ $t('CreateTicket') }}
+            </v-btn>
+            <a
+              v-else
+              :href="ticketUrl"
+              target="_blank"
+              style="color: inherit; text-decoration: none;"
+              class="d-inline-block"
+            >
+              <v-btn
+                outline
+                :color="`${isDark ? 'blue-grey' : 'grey darken-2'}`"
+              >
+                <v-icon>confirmation_number</v-icon>&nbsp; {{ $t('ViewTicket') }}
+              </v-btn>
+            </a>
+          </div>
+          <div class="d-flex justify-end">
+            <v-btn
+              outline
+              style="max-width: 10rem"
+              :color="`${isDark ? 'red lighten-1' : 'red darken-2'}`"
+              @click="deleteAlert"
+            >
+              <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
+            </v-btn>
+          </div>
         </v-flex>
       </v-layout>
     </v-container>
 
 
-    <v-container
+    <!-- <v-container
       v-if="showForm"
       class="pa-1"
       fluid
@@ -154,7 +199,7 @@
           </v-form>
         </v-flex>
       </v-layout>
-    </v-container>
+    </v-container> -->
   </div>
 </template>
 
@@ -203,11 +248,30 @@ export default {
     },
     isClosed() {
       return this.status == 'closed'
+    },
+    alertHasTicket() {
+      const keys = Object.keys(this.$store.state.alerts.alert.attributes)
+      return keys.includes('ticket_id')
+    },
+    ticketUrl() {
+      return this.$store.state.alerts.alert.attributes.ticket_url_raw
     }
   },
   methods: {
+    changeSeverity: debounce(function(action) {
+      this.$emit('change-severity', this.id)
+      this.close()
+    }, 200, {leading: true, trailing: false}),
+    assignAlert: debounce(function(action) {
+      this.$emit('assign-to', this.id)
+      this.close()
+    }, 200, {leading: true, trailing: false}),
     takeAction: debounce(function(action) {
       this.$emit('take-action', this.id, action, this.text)
+      this.close()
+    }, 200, {leading: true, trailing: false}),
+    createTicket: debounce(function(action) {
+      this.$emit('create-ticket', this.id)
       this.close()
     }, 200, {leading: true, trailing: false}),
     ackAlert: debounce(function() {

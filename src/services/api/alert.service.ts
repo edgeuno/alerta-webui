@@ -4,6 +4,26 @@ import axios from 'axios'
 let queryInProgress
 
 export default {
+  addAlert(data) {
+    return api.post(
+      '/alert',
+      {
+        ...data,
+        attributes: data.attributes.reduce((previousValue, currentValue) => {
+          let splittedItem: string[] = currentValue.split(':')
+          let key: string = splittedItem[0]
+          let value: string = splittedItem[1].replace(':', '')
+
+          return {...previousValue, [key]: value}
+        }, {})
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  },
   getAlert(alertId: string) {
     return api.get(`/alert/${alertId}`)
   },
@@ -106,5 +126,16 @@ export default {
       params: query
     }
     return api.get('/alerts/tags', config)
+  },
+  createTicket(alertId) {
+    return api.post('webhooks/tickets', {
+      alert_id: alertId
+    })
+  },
+  assignTo(data: { alert_id: string, assign_to: string }) {
+    return api.post('webhooks/assignment', data)
+  },
+  setSeverity(data: { alert_id: string, severity: string }) {
+    return api.post('webhooks/severity', data)
   }
 }
