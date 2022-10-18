@@ -376,7 +376,7 @@
                 icon
                 small
                 class="btn--plain pa-0 ma-0"
-                @click.stop="ackAlert(props.item.id)"
+                @click.stop="beforeAckAlert(props.item.id)"
               >
                 <v-icon
                   :size="fontSize"
@@ -760,7 +760,20 @@ export default {
     isClosed(status) {
       return status == 'closed'
     },
+    toggleNoteDialog: debounce(function(bool) {
+      this.$store.dispatch('alerts/toggleNoteDialog', bool)
+    }, 200, {leading: true, trailing: false}),
+    beforeAckAlert(id) {
+      alert('Before ack this alert, you should add note explaining why :)')
+      this.toggleNoteDialog(true)
+      this.$store.commit('alerts/SET_NOTE_BEFORE_ACK', true)
+    },
     takeAction: debounce(function(id, action) {
+      if (action == 'ack') {
+        this.beforeAckAlert(id)
+        return
+      }
+
       this.$store
         .dispatch('alerts/takeAction', [id, action, ''])
         .then(() => this.$store.dispatch('alerts/getAlerts'))
