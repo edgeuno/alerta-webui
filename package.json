@@ -22,8 +22,7 @@
   "keywords": [
     "alerta",
     "monitoring",
-    "webui",
-    "pipeline5"
+    "webui"
   ],
   "author": "satterly",
   "license": "Apache-2.0",
