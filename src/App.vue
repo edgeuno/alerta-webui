@@ -704,6 +704,7 @@ export default {
         this.$nextTick(() =>  {
           setTimeout(() => {
             this.getNotes(id)
+            this.$store.commit('alerts/SET_ALERT', {})
           }, 200)
         })
       }

@@ -766,6 +766,7 @@ export default {
     beforeAckAlert(id) {
       alert('Before ack this alert, you should add note explaining why :)')
       this.toggleNoteDialog(true)
+      this.$store.commit('alerts/SET_ALERT', { id })
       this.$store.commit('alerts/SET_NOTE_BEFORE_ACK', true)
     },
     takeAction: debounce(function(id, action) {
