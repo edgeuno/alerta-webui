@@ -36,6 +36,7 @@
               :counter="maxNoteLength"
               :label="$t('AddNote')"
               prepend-icon="edit"
+              :rules="formRules.note"
               name="input-7-1"
               autofocus
               box
@@ -138,6 +139,13 @@ export default {
         },
       ]
     },
+    formRules() {
+      return {
+        note: [
+          v => !!v || 'A note is required'
+        ]
+      }
+    },
     actionsAvailableValues() {
       return this.actionsAvailable.map(item => item.value)
     },
@@ -172,7 +180,7 @@ export default {
   },
   methods: {
     checkValue(value) {
-      if (value !== '' && this.actionsAvailableValues.includes(value)) {
+      if (value.trim() !== '' && this.actionsAvailableValues.includes(value)) {
         this.action = value
       }
     },
