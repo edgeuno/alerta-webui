@@ -582,6 +582,8 @@ export default {
     bus.$on('bulk-delete-alert', this.bulkDeleteAlert)
     bus.$on('toggle-assign-to', this.toggleAssignTo)
     bus.$on('set-change-severity', this.toggleChangeSeverity)
+    bus.$on('group-alerts', this.handleGroupAlerts)
+    bus.$on('ungroup-alerts', this.handleUnGroupAlerts)
   },
   
   beforeDestroy() {
@@ -593,9 +595,16 @@ export default {
     bus.$off('bulk-delete-alert', this.bulkDeleteAlert)
     bus.$off('toggle-assign-to', this.toggleAssignTo)
     bus.$off('set-change-severity', this.toggleChangeSeverity)
-
+    bus.$off('group-alerts', this.handleGroupAlerts)
+    bus.$off('ungroup-alerts', this.handleUnGroupAlerts)
   },
   methods: {
+    handleGroupAlerts(data) {
+      this.$store.dispatch('alerts/groupAlerts', data)
+    },
+    handleUnGroupAlerts(data) {
+      this.$store.dispatch('alerts/ungroupAlerts', data)
+    },
     toggleAssignTo(bool) {
       this.isAssignTo = bool
     },

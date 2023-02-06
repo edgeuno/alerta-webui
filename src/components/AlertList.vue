@@ -52,10 +52,12 @@
           </th>
         </tr>
       </template>
+
       <template
         slot="items"
         slot-scope="props"
       >
+        <!-- <alert-group-list collapse-id="test"> -->
         <tr
           :style="{ 'background-color': severityColor(props.item.attributes.severity_raw ? props.item.attributes.severity_raw : props.item.severity) }"
           class="hover-lighten"
@@ -502,7 +504,9 @@
             </div>
           </td>
         </tr>
+        <!-- </alert-group-list> -->
       </template>
+
       <template slot="no-data">
         <div class="text-xs-center">
           <span v-if="isLoading">{{ $t('Loading') }}...</span>
@@ -519,10 +523,12 @@ import get from 'lodash/get'
 import DateTime from './lib/DateTime'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
+// import AlertGroupList from './AlertsGroupList'
 
 export default {
   components: {
-    DateTime
+    DateTime,
+    // AlertGroupList,
   },
   props: {
     alerts: {
