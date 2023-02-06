@@ -14,6 +14,7 @@ const state = {
   environments: [],
   services: [],
   groups: [],
+  alertsGrouped: {},
   tags: [],
 
   alert: {},
@@ -121,6 +122,9 @@ const mutations = {
   },
   DISPLAY_CHANGE_SEVERITY(state, bool) {
     state.isDisplayChangeSeverity = bool
+  },
+  SET_ALERT_GROUP(state, group) {
+    state.alertsGrouped = Object.assign({}, state.alertsGrouped, group)
   }
 }
 
@@ -235,15 +239,14 @@ const actions = {
   displayNotes({commit}, bool) {
     commit('DISPLAY_NOTES', bool)
   },
-  
 
   setChangeSeverity({commit}, bool) {
     commit('DISPLAY_CHANGE_SEVERITY', bool)
   },
 
-  async changeSeverity({ commit }, { alerts, severity }: {alerts: Array<{id: string}>; severity: string}) {
+  async changeSeverity({commit}, {alerts, severity}: {alerts: Array<{id: string}>; severity: string}) {
     for (let alert of alerts) {
-      await AlertsApi.setSeverity( {alert_id: alert.id, severity }).then((res) => {
+      await AlertsApi.setSeverity({alert_id: alert.id, severity}).then(res => {
         if (alerts.length <= 1) {
           commit('SET_ALERT', res.alert)
         }
@@ -254,10 +257,10 @@ const actions = {
   setAssignTo({commit}, bool) {
     commit('DISPLAY_ASSIGN_TO', bool)
   },
-  
-  async assignAlert({ commit }, {alerts, assignedTo}: {alerts: Array<{id: string}>; assignedTo: string}) {
+
+  async assignAlert({commit}, {alerts, assignedTo}: {alerts: Array<{id: string}>; assignedTo: string}) {
     for (let alert of alerts) {
-      await AlertsApi.assignTo({alert_id: alert.id, assign_to: assignedTo}).then((res) => {
+      await AlertsApi.assignTo({alert_id: alert.id, assign_to: assignedTo}).then(res => {
         if (alerts.length <= 1) {
           commit('SET_ALERT', res.alert)
         }
@@ -377,7 +380,37 @@ const actions = {
   },
   setPanel({commit}, panel) {
     commit('SET_PANEL', panel)
-  }
+  },
+
+  async groupAlerts({commit, dispatch, getters, state}, data) {
+    // Parent will be the one selected first, and the other ones their 'child'
+    let parent = data[0]
+    // We group 'child' alerts
+    const group = {[parent.id]: data.filter(item => item.id !== parent.id)}
+    commit('SET_ALERT_GROUP', group)
+    
+    // We set selected to none, so bulk actions panel closes
+    dispatch('updateSelected', [])
+    
+    // We need to removed grouped alerts from general alerts array
+    const alerts = state.alerts.filter(alert => !getters.groupedAlerts.includes(alert.id))
+    commit('SET_ALERTS', [alerts, alerts.length, state.pagination.rowsPerPage])
+  },
+
+  async ungroupAlerts({commit, dispatch, getters, state}, data) {
+    // Parent will be the one selected first, and the other ones their 'child'
+    let parent = data[0]
+    // Removing grouped alerts
+    const grouped = state.alertsGrouped
+    // commit('SET_ALERT_GROUP', group)
+    
+    // We set selected to none, so bulk actions panel closes
+    dispatch('updateSelected', [])
+
+    // // We need to removed grouped alerts from general alerts array
+    // const alerts = state.alerts.filter(alert => !getters.groupedAlerts.includes(alert.id))
+    // commit('SET_ALERTS', [alerts, alerts.length, state.pagination.rowsPerPage])
+  },
 }
 
 const getters = {
@@ -385,10 +418,24 @@ const getters = {
     if (state.isWatch) {
       const username = rootState.auth.payload.preferred_username
       const tag = `watch:${username}`
-      return state.alerts.filter(a => a.tags.includes(tag))
+      const alerts = state.alerts.filter(a => a.tags.includes(tag))
+      // We should check for any grouped alerts
+      if (getters.groupedAlerts) return alerts.filter(alert => !getters.groupedAlerts.includes(alert.id))
+      return alerts
     } else {
+      // We should check for any grouped alerts
+      if (getters.groupedAlerts) return state.alerts.filter(alert => !getters.groupedAlerts.includes(alert.id))
       return state.alerts
     }
+  },
+  groupedAlerts: state => {
+    let keys = Object.keys(state.alertsGrouped)
+    if (!keys.length) return []
+
+    return keys
+      .map(key => state.alertsGrouped[key])
+      .flat(1)
+      .map(item => item.id)
   },
   environments:
     (state, getters, rootState) =>

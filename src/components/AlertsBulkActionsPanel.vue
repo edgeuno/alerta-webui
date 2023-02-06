@@ -87,6 +87,49 @@
           </v-flex>
 
           <v-spacer />
+
+          <v-flex
+            v-if="!isGrouped(selected.length ? selected[0] : '')"
+            xs12
+            class="py-0 px-1"
+          >
+            <v-btn
+              slot="activator"
+              block
+              depressed
+              @click="groupAlerts"
+            >
+              <span>{{ $t('Group') }}</span>
+              <v-icon
+                size="20px"
+                class="ml-1"
+              >
+                group
+              </v-icon>
+            </v-btn>
+          </v-flex>
+
+          <v-flex
+            v-if="isGrouped(selected.length ? selected[0] : '')"  
+            xs12
+            class="py-0 px-1"
+          >
+            <v-btn
+              slot="activator"
+              block
+              depressed
+              @click="ungroupAlerts"
+            >
+              <span>{{ $t('UnGroup') }}</span>
+              <v-icon
+                size="20px"
+                class="ml-1"
+              >
+                group
+              </v-icon>
+            </v-btn>
+          </v-flex>
+
           <v-flex
             xs12
             class="py-0 px-1"
@@ -316,6 +359,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { bus } from '@/common/bus.ts'
 import debounce from 'lodash/debounce'
 
@@ -330,6 +374,9 @@ export default {
     sidesheet: vm.value,
   }),
   computed: {
+    ...mapGetters({
+      groupedAlerts: 'alerts/groupedAlerts',
+    }),
     isDark() {
       return this.$store.getters.getPreference('isDark')
     },
@@ -360,6 +407,9 @@ export default {
     someAreClosed(status) {
       return this.selected.some(item => item.status == 'closed')
     },
+    isGrouped() {
+      return id => this.groupedAlerts.length && this.groupedAlerts.includes(id)
+    }
   },
   watch: {
     value(val) {
@@ -370,6 +420,12 @@ export default {
     },
   },
   methods: {
+    groupAlerts() {
+      bus.$emit('group-alerts', this.selected)
+    },
+    ungroupAlerts() {
+      bus.$emit('ungroup-alerts', this.selected)
+    },
     changeSeverity() {
       bus.$emit('set-change-severity', true)
     },
