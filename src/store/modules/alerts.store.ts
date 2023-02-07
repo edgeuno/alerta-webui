@@ -125,6 +125,11 @@ const mutations = {
   },
   SET_ALERT_GROUP(state, group) {
     state.alertsGrouped = Object.assign({}, state.alertsGrouped, group)
+  },
+  REMOVE_ALERT_GROUP(state, groupId) {
+    const grouped = Object.assign({}, state.alertsGrouped)
+    delete grouped[groupId]
+    state.alertsGrouped = grouped
   }
 }
 
@@ -397,19 +402,15 @@ const actions = {
     commit('SET_ALERTS', [alerts, alerts.length, state.pagination.rowsPerPage])
   },
 
-  async ungroupAlerts({commit, dispatch, getters, state}, data) {
+  async ungroupAlerts({commit, dispatch, state}, data) {
     // Parent will be the one selected first, and the other ones their 'child'
-    let parent = data[0]
+    let parent = data[0].id
     // Removing grouped alerts
-    const grouped = state.alertsGrouped
-    // commit('SET_ALERT_GROUP', group)
-    
+    commit('REMOVE_ALERT_GROUP', parent)
     // We set selected to none, so bulk actions panel closes
     dispatch('updateSelected', [])
-
-    // // We need to removed grouped alerts from general alerts array
-    // const alerts = state.alerts.filter(alert => !getters.groupedAlerts.includes(alert.id))
-    // commit('SET_ALERTS', [alerts, alerts.length, state.pagination.rowsPerPage])
+    // Updating alerts list
+    dispatch('getAlerts')
   },
 }
 
@@ -427,6 +428,9 @@ const getters = {
       if (getters.groupedAlerts) return state.alerts.filter(alert => !getters.groupedAlerts.includes(alert.id))
       return state.alerts
     }
+  },
+  groupedAlertsParents: state => {
+    return Object.keys(state.alertsGrouped)
   },
   groupedAlerts: state => {
     let keys = Object.keys(state.alertsGrouped)
