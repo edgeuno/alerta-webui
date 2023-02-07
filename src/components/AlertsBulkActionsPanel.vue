@@ -376,6 +376,7 @@ export default {
   computed: {
     ...mapGetters({
       groupedAlerts: 'alerts/groupedAlerts',
+      groupedAlertsParents: 'alerts/groupedAlertsParents',
     }),
     isDark() {
       return this.$store.getters.getPreference('isDark')
@@ -408,7 +409,7 @@ export default {
       return this.selected.some(item => item.status == 'closed')
     },
     isGrouped() {
-      return id => this.groupedAlerts.length && this.groupedAlerts.includes(id)
+      return alert => this.groupedAlertsParents && this.groupedAlertsParents.includes(alert.id)
     }
   },
   watch: {
