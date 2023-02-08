@@ -825,8 +825,8 @@ export default {
   }),
   computed: {
     ...mapGetters({
+      isGrouped: 'alerts/isAlertGrouped',
       getGroupedAlertsFrom: 'alerts/getGroupedAlertsFrom',
-      groupedAlertsParents: 'alerts/groupedAlertsParents',
     }),
     isDark() {
       return this.$store.getters.getPreference('isDark')
@@ -922,9 +922,6 @@ export default {
     },
     username() {
       return this.$store.getters['auth/getUsername']
-    },
-    isGrouped() {
-      return alert => this.groupedAlertsParents && this.groupedAlertsParents.includes(alert.id)
     }
   },
   watch: {
@@ -1070,9 +1067,13 @@ export default {
         .then(() => this.$store.dispatch('alerts/getAlerts'))
     }, 200, {leading: true, trailing: false}),
     deleteAlert: debounce(function(id) {
-      confirm(i18n.t('ConfirmDelete')) &&
+      const confirmed = confirm(i18n.t('ConfirmDelete'))
+      if (confirmed && !this.isGrouped({ id })) {
         this.$store.dispatch('alerts/deleteAlert', id)
           .then(() => this.$store.dispatch('alerts/getAlerts'))
+      } else {
+        this.$store.dispatch('alerts/deleteGroupedAlerts', id).then(() => this.$store.dispatch('alerts/getAlerts'))
+      }
     }, 200, {leading: true, trailing: false}),
     clipboardCopy(text) {
       let textarea = document.createElement('textarea')

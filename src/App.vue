@@ -324,6 +324,7 @@ import AlertAddNote from '@/components/AlertAddNote'
 import NotesDialog from '@/components/NotesDialog'
 import i18n from '@/plugins/i18n'
 import { bus } from '@/common/bus.ts'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
@@ -350,6 +351,9 @@ export default {
     error: false
   }),
   computed: {
+    ...mapGetters({
+      isGrouped: 'alerts/isAlertGrouped',
+    }),
     items() {
       return [
         {
@@ -789,7 +793,13 @@ export default {
     },
     bulkDeleteAlert() {
       confirm(i18n.t('ConfirmDelete')) &&
-        Promise.all(this.selected.map(a => this.$store.dispatch('alerts/deleteAlert', a.id, false))).then(() => {
+        Promise.all(this.selected.map(a => {
+          if (!this.isGrouped(a)) {
+            this.$store.dispatch('alerts/deleteAlert', a.id, false)
+          } else {
+            this.$store.dispatch('alerts/deleteGroupedAlerts', a.id, false)
+          }
+        })).then(() => {
           this.clearSelected()
           this.$store.dispatch('alerts/getAlerts')
         })
