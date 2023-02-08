@@ -441,6 +441,9 @@ const getters = {
       .flat(1)
       .map(item => item.id)
   },
+  getGroupedAlertsFrom: state => id => {
+    return state.alertsGrouped[id]
+  } ,
   environments:
     (state, getters, rootState) =>
     (showAllowedEnvs = true) => {
