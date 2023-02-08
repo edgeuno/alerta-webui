@@ -696,6 +696,11 @@ export default {
         }
 
         this.$store.dispatch('alerts/addNote', [alertId, note]).then(() => {
+          // Adding notes to child alerts if it is grouped
+          if (this.isGrouped({ id: alertId })) {
+            this.$store.dispatch('alerts/addNoteToGroupedAlerts', [alertId, note])
+          }
+        }).then(() => {
           this.$store.dispatch(
             'notifications/success',
             'Note added correctly!',
@@ -738,7 +743,15 @@ export default {
         return
       }
       
+      this.selected.forEach(alert => {
+        // Adding notes to child alerts if it is grouped
+        if (this.isGrouped({ id: alert.id })) {
+          this.$store.dispatch('alerts/addNoteToGroupedAlerts', [alert.id, note])
+        }
+      })
+
       this.$store.dispatch('alerts/addBulkNotes', [this.selected, note]).then(() => {
+
         this.clearSelected()
         this.$store.dispatch(
           'notifications/success',

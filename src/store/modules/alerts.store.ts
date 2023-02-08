@@ -288,7 +288,7 @@ const actions = {
         }
       }
 
-      dispatch('alerts/setIsAddingNoteBeforeAck', false)
+      dispatch('setIsAddingNoteBeforeAck', false)
     } catch (err) {
       console.error(err)
     } finally {
@@ -421,6 +421,13 @@ const actions = {
 
     dispatch('deleteAlert', parentId)
     commit('REMOVE_ALERT_GROUP', parentId)
+  },
+
+  async addNoteToGroupedAlerts({ dispatch, state }, [parentId, text]) {
+    const grouped = state.alertsGrouped[parentId]
+    for await (let alert of grouped) [
+      dispatch('addNote', [alert.id, text])
+    ]
   }
 }
 
