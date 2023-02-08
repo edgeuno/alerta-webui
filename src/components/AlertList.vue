@@ -15,6 +15,7 @@
       sort-icon="arrow_drop_down"
       disable-initial-sort
       hide-default-header
+      :expand="expand"
     >
       <template
         slot="headers"
@@ -59,8 +60,8 @@
       >
         <!-- <alert-group-list collapse-id="test"> -->
         <tr
-          :style="{ 'background-color': severityColor(props.item.attributes.severity_raw ? props.item.attributes.severity_raw : props.item.severity) }"
           class="hover-lighten"
+          :style="{ 'background-color': severityColor(props.item.attributes.severity_raw ? props.item.attributes.severity_raw : props.item.severity) }"
           @click="selectItem(props.item)"
         >
           <td
@@ -503,8 +504,254 @@
               </v-menu>
             </div>
           </td>
+          <td>
+            <v-btn
+              p0
+              icon
+              small
+              :disabled="!isGrouped(props.item)"
+              @click.stop="props.expanded = !props.expanded; handleExpandGroupedAlerts()"
+            >
+              <v-icon>
+                expand_more
+              </v-icon>
+            </v-btn>
+          </td>
         </tr>
         <!-- </alert-group-list> -->
+      </template>
+
+      <template v-slot:expand="props">
+        <div :key="groupedAlert.id + rowIndex" v-for="(groupedAlert, rowIndex) in getGroupedAlertsFrom(props.item.id)" class="grouped_alert">
+          <tr
+            class="hover-lighten"
+            :style="{ 'background-color': severityColor(groupedAlert.attributes.severity_raw ? groupedAlert.attributes.severity_raw : groupedAlert.severity) }"
+            @click="selectItem(groupedAlert)"
+          >
+            <td
+              class="text-no-wrap"
+            >
+              {{ " " }}
+            </td>
+            <td
+              v-for="col in $config.columns"
+              :key="col"
+              :class="['text-no-wrap', textColor(groupedAlert.severity)]"
+              :style="fontStyle"
+            >
+              <span
+                v-if="col == 'id'"
+              >
+                {{ groupedAlert.id | shortId }}
+              </span>
+              <span
+                v-if="col == 'resource'"
+              >
+                {{ groupedAlert.resource }}
+              </span>
+              <span
+                v-if="col == 'event'"
+              >
+                {{ groupedAlert.event }}
+              </span>
+              <span
+                v-if="col == 'environment'"
+              >
+                {{ groupedAlert.environment }}
+              </span>
+              <span
+                v-if="col == 'severity'"
+              >
+                <span
+                  :class="['label', 'label-' + groupedAlert.severity.toLowerCase()]"
+                  :style="fontStyle"
+                >
+                  {{ groupedAlert.severity | capitalize }}
+                </span>
+              </span>
+              <span
+                v-if="col == 'correlate'"
+              >
+                {{ groupedAlert.correlate.join(', ') }}
+              </span>
+              <span
+                v-if="col == 'status'"
+              >
+                <v-chip
+                  :color="`${isDark ? 'red' : 'white'}`"
+                  small
+                  text-color="#000000"
+                  :style="fontStyle"
+                >
+                  {{ groupedAlert.status | capitalize }}
+                </v-chip>
+              </span>
+              <span
+                v-if="col == 'service'"
+              >
+                {{ groupedAlert.service.join(', ') }}
+              </span>
+              <span
+                v-if="col == 'group'"
+              >
+                {{ groupedAlert.group }}
+              </span>
+              <span
+                v-if="col == 'value'"
+              >
+                <div class="fixed-table">
+                  <div class="text-truncate">
+                    <span v-html="groupedAlert.value" />
+                  </div>
+                </div>
+              </span>
+              <span
+                v-if="col == 'text'"
+                style="display: flex; gap: 1rem; align-items: center;"
+              >
+                <span
+                  v-if="showNotesIcon"
+                >
+                  <span
+                    v-if="lastNote(groupedAlert)"
+                    class="pl-2"
+                  >
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                          v-bind="attrs"
+                          small
+                          v-on="on"
+                        >text_snippet</v-icon>
+                      </template>
+                      <span>{{ lastNote(groupedAlert) }}</span>
+                    </v-tooltip>
+                  </span>
+                </span>
+                <div class="fixed-table">
+                  <div class="text-truncate">
+                    <span v-html="groupedAlert.text" />
+                  </div>
+                </div>
+              </span>
+              <span
+                v-if="col == 'tags'"
+              >
+                <span
+                  v-for="tag in groupedAlert.tags"
+                  :key="tag"
+                ><span
+                  class="label"
+                  :style="fontStyle"
+                >{{ tag }}</span>&nbsp;</span>
+              </span>
+              <span
+                v-if="groupedAlert.attributes.hasOwnProperty(col)"
+              >
+                <span v-html="groupedAlert.attributes[col]" />
+              </span>
+              <span
+                v-if="col == 'origin'"
+              >
+                {{ groupedAlert.origin }}
+              </span>
+              <span
+                v-if="col == 'type'"
+              >
+                <span
+                  class="label"
+                  :style="fontStyle"
+                >
+                  {{ groupedAlert.type | splitCaps }}
+                </span>
+              </span>
+              <span
+                v-if="col == 'createTime'"
+              >
+                <date-time
+                  :value="groupedAlert.createTime"
+                  format="mediumDate"
+                />
+              </span>
+              <span
+                v-if="col == 'timeout'"
+              >
+                {{ groupedAlert.timeout | hhmmss }}
+              </span>
+              <span
+                v-if="col == 'timeoutLeft'"
+                class="text-xs-right"
+              >
+                {{ timeoutLeft(groupedAlert) | hhmmss }}
+              </span>
+              <!-- rawData not supported -->
+              <span
+                v-if="col == 'customer' && $config.customer_views"
+              >
+                {{ groupedAlert.customer }}
+              </span>
+              <span
+                v-if="col == 'duplicateCount'"
+              >
+                {{ groupedAlert.duplicateCount }}
+              </span>
+              <span
+                v-if="col == 'repeat'"
+              >
+                <span
+                  class="label"
+                  :style="fontStyle"
+                >
+                  {{ groupedAlert.repeat | capitalize }}
+                </span>
+              </span>
+              <span
+                v-if="col == 'previousSeverity'"
+              >
+                <span
+                  :class="['label', 'label-' + groupedAlert.previousSeverity.toLowerCase()]"
+                  :style="fontStyle"
+                >
+                  {{ groupedAlert.previousSeverity | capitalize }}
+                </span>
+              </span>
+              <!-- trendIndication not supported -->
+              <span
+                v-if="col == 'receiveTime'"
+              >
+                <date-time
+                  :value="groupedAlert.receiveTime"
+                  format="mediumDate"
+                />
+              </span>
+              <span
+                v-if="col == 'duration'"
+                class="text-xs-right"
+              >
+                {{ duration(groupedAlert) | hhmmss }}
+              </span>
+              <span
+                v-if="col == 'lastReceiveId'"
+              >
+                {{ groupedAlert.lastReceiveId | shortId }}
+              </span>
+              <span
+                v-if="col == 'lastReceiveTime'"
+              >
+                <date-time
+                  :value="groupedAlert.lastReceiveTime"
+                  format="mediumDate"
+                />
+              </span>
+              <!-- only history supported is most recent note -->
+              <span
+                v-if="col == 'note'"
+              >
+                {{ lastNote(groupedAlert) }}
+              </span>
+            </td>
+          </tr>
+        </div>
       </template>
 
       <template slot="no-data">
@@ -523,6 +770,7 @@ import get from 'lodash/get'
 import DateTime from './lib/DateTime'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
+import { mapGetters } from 'vuex'
 // import AlertGroupList from './AlertsGroupList'
 
 export default {
@@ -537,6 +785,7 @@ export default {
     }
   },
   data: vm => ({
+    expand: false,
     search: '',
     headersMap: {
       id: { text: i18n.t('AlertId'), value: 'id' },
@@ -575,6 +824,10 @@ export default {
     timer: null
   }),
   computed: {
+    ...mapGetters({
+      getGroupedAlertsFrom: 'alerts/getGroupedAlertsFrom',
+      groupedAlertsParents: 'alerts/groupedAlertsParents',
+    }),
     isDark() {
       return this.$store.getters.getPreference('isDark')
     },
@@ -669,6 +922,9 @@ export default {
     },
     username() {
       return this.$store.getters['auth/getUsername']
+    },
+    isGrouped() {
+      return alert => this.groupedAlertsParents && this.groupedAlertsParents.includes(alert.id)
     }
   },
   watch: {
@@ -680,6 +936,15 @@ export default {
     }
   },
   methods: {
+    async handleExpandGroupedAlerts() {
+      // Waiting for animation function to be called
+      await this.$nextTick()
+      // Now we can see them in the DOM
+      const expandedPanels = document.querySelectorAll('.v-datatable__expand-col.v-datatable__expand-col--expanded')
+      expandedPanels.forEach(item => {
+        item.setAttribute('colspan', 12)
+      })
+    },
     handleCheckAlert(e) {
       const value = e.target.checked
       if (value) this.multiselect = true
@@ -897,12 +1162,14 @@ export default {
   min-width: var(--text-width);
 }
 
-.comfortable table.v-table tbody td, table.v-table tbody th {
+.comfortable table.v-table tbody tr:not(.v-datatable__expand-row) td, table.v-table tbody tr:not(.v-datatable__expand-row) th {
   height: 42px !important;
+  vertical-align: middle;
 }
 
-.compact table.v-table tbody td, table.v-table tbody th {
+.compact table.v-table tbody tr:not(.v-datatable__expand-row) td, table.v-table tbody tr:not(.v-datatable__expand-row) th {
   height: 34px !important;
+  vertical-align: middle;
 }
 
 .alert-table .v-table tbody td {
@@ -995,12 +1262,16 @@ div.select-box {
 div.action-buttons {
   position: absolute;
   opacity: 0;
-  right: 0;
-  top: 0.5em;
+  right: 3rem;
+  top: 0.8em;
   height: 2em;
 }
 
 tr:hover div.action-buttons {
   opacity: 1;
+}
+
+.grouped_alert {
+  padding-left: 5vw;
 }
 </style>
