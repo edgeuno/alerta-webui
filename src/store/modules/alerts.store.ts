@@ -412,6 +412,16 @@ const actions = {
     // Updating alerts list
     dispatch('getAlerts')
   },
+
+  async deleteGroupedAlerts({ commit, dispatch, state }, parentId) {
+    const grouped = state.alertsGrouped[parentId]
+    for await (let alert of grouped) {
+      dispatch('deleteAlert', alert.id)
+    }
+
+    dispatch('deleteAlert', parentId)
+    commit('REMOVE_ALERT_GROUP', parentId)
+  }
 }
 
 const getters = {
@@ -440,6 +450,9 @@ const getters = {
       .map(key => state.alertsGrouped[key])
       .flat(1)
       .map(item => item.id)
+  },
+  isAlertGrouped(_, getters) {
+    return alert => getters.groupedAlertsParents && getters.groupedAlertsParents.includes(alert.id)
   },
   getGroupedAlertsFrom: state => id => {
     return state.alertsGrouped[id]
