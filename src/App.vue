@@ -127,39 +127,55 @@
 
         <v-spacer />
 
-        <v-text-field
-          v-if="$route.name === 'alerts'"
-          v-model="query"
-          :flat="!hasFocus"
-          :label="$t('Search')"
-          prepend-inner-icon="search"
-          solo
-          clearable
-          :disabled="Boolean(selected.length)"
-          height="44"
-          class="pt-2 mr-3 hidden-sm-and-down"
-          @focus="hasFocus = true"
-          @blur="hasFocus = false"
-          @change="submitSearch"
-          @click:clear="clearSearch"
-        >
-          <template v-slot:append-outer>
-            <v-tooltip
-              bottom
-            >
+        <v-layout fluid>
+          <v-text-field
+            v-if="$route.name === 'alerts'"
+            v-model="query"
+            :flat="!hasFocus"
+            :label="$t('Search')"
+            prepend-inner-icon="search"
+            solo
+            clearable
+            :disabled="Boolean(selected.length)"
+            height="44"
+            class="pt-2 mr-3 hidden-sm-and-down"
+            @focus="hasFocus = true"
+            @blur="hasFocus = false"
+            @change="submitSearch"
+            @click:clear="clearSearch"
+          />
+          <v-select
+            v-model="columnSelected"
+            :items="columnsAvailable"
+            label=""
+            solo
+            flat
+            item-text="label"
+            item-value="value"
+            style="width: 20px; margin-top: .56rem;"
+            placeholder="Select column"
+            @change="queryByColumn"
+          />
+          <div class="flex-center" style="padding: .4rem;">
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-icon
-                  :disabled="Boolean(selected.length)"
-                  v-on="on"
-                  @click="saveSearch"
+                <v-btn
+                  small
+                  icon
                 >
-                  push_pin
-                </v-icon>
+                  <v-icon
+                    :disabled="Boolean(selected.length)"
+                    v-on="on"
+                    @click="saveSearch"
+                  >
+                    push_pin
+                  </v-icon>
+                </v-btn>
               </template>
               <span>{{ $t('Save') }}</span>
             </v-tooltip>
-          </template>
-        </v-text-field>
+          </div>
+        </v-layout>
 
         <div
           v-if="$route.name === 'alerts'"
@@ -345,6 +361,7 @@ export default {
     hints: true,
     dialog: false,
     drawer: false,
+    columnSelected: 'Description',
     navbar: {
       signin: { icon: 'account_circle', text: i18n.t('SignIn'), path: '/login' }
     },
@@ -354,6 +371,9 @@ export default {
     ...mapGetters({
       isGrouped: 'alerts/isAlertGrouped',
     }),
+    columnsAvailable() {
+      return [{ label: 'Resource', value: 'resource' }, { label: 'Description', value: 'text' }]
+    },
     items() {
       return [
         {
@@ -508,8 +528,9 @@ export default {
     },
     query: {
       get() {
-        return this.$store.state.alerts.query
-          ? this.$store.state.alerts.query.q
+        return this.$store.state.alerts.query.q
+          ? this.$store.state.alerts.query.q.includes(':') 
+            ? this.$store.state.alerts.query.q.split(':')[1] : this.$store.state.alerts.query.q
           : null
       },
       set(value) {
@@ -640,12 +661,24 @@ export default {
       this.selected.length > 1 ? this.bulkAckAlert(data) : this.addSingleNote(data)
     },
     submitSearch(query) {
-      this.$store.dispatch('alerts/updateQuery', { q: query })
-      this.$router.push({
-        query: { ...this.$router.query, q: query },
-        hash: this.$store.getters['alerts/getHash']
-      })
-      this.refresh()
+      if (query) {
+        this.$store.dispatch('alerts/updateQuery', { q: `${this.columnSelected.toLowerCase()}:${query}` })
+        this.$router.push({
+          query: { ...this.$router.query, q: `${this.columnSelected.toLowerCase()}:${query}` },
+          hash: this.$store.getters['alerts/getHash']
+        })
+        this.refresh()
+      } else {
+        this.$store.dispatch('alerts/updateQuery', {})
+        this.$router.push({
+          query: { ...this.$router.query },
+          hash: this.$store.getters['alerts/getHash']
+        })
+        this.refresh()
+      }
+    },
+    queryByColumn() {
+      this.submitSearch(this.query)
     },
     clearSearch() {
       this.query = null
@@ -865,5 +898,10 @@ export default {
 }
 .btn--plain:hover {
   opacity: 1;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
