@@ -361,7 +361,7 @@ export default {
     hints: true,
     dialog: false,
     drawer: false,
-    columnSelected: 'Description',
+    columnSelected: 'text',
     navbar: {
       signin: { icon: 'account_circle', text: i18n.t('SignIn'), path: '/login' }
     },
