@@ -150,13 +150,17 @@
             label=""
             solo
             flat
+            multiple
             item-text="label"
             item-value="value"
             style="width: 20px; margin-top: .56rem;"
             placeholder="Select column"
             @change="queryByColumn"
           />
-          <div class="flex-center" style="padding: .4rem;">
+          <div
+            class="flex-center"
+            style="padding: .4rem;"
+          >
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -361,7 +365,7 @@ export default {
     hints: true,
     dialog: false,
     drawer: false,
-    columnSelected: 'text',
+    columnSelected: ['text'],
     navbar: {
       signin: { icon: 'account_circle', text: i18n.t('SignIn'), path: '/login' }
     },
@@ -529,9 +533,11 @@ export default {
     query: {
       get() {
         return this.$store.state.alerts.query.q
-          ? this.$store.state.alerts.query.q.includes(':') 
-            ? this.$store.state.alerts.query.q.split(':')[1] : this.$store.state.alerts.query.q
-          : null
+          ? this.$store.state.alerts.query.q.includes('||')
+            ? this.$store.state.alerts.query.q.split('||')[0].split(':')[1].trim() 
+            : this.$store.state.alerts.query.q.includes(':') 
+              ? this.$store.state.alerts.query.q.split(':')[1]
+              : null : null
       },
       set(value) {
         // FIXME: offer query suggestions to user here, in future
@@ -610,7 +616,6 @@ export default {
     bus.$on('group-alerts', this.handleGroupAlerts)
     bus.$on('ungroup-alerts', this.handleUnGroupAlerts)
   },
-  
   beforeDestroy() {
     bus.$off('take-bulk-action', this.takeBulkAction)
     bus.$off('bulk-ack-alert', this.bulkAckAlert)
@@ -662,9 +667,17 @@ export default {
     },
     submitSearch(query) {
       if (query) {
-        this.$store.dispatch('alerts/updateQuery', { q: `${this.columnSelected.toLowerCase()}:${query}` })
+        let q = ''
+
+        if (this.columnSelected.length >= 2) {
+          q = `${this.columnSelected[0].toLowerCase()}:${query} || ${this.columnSelected[1].toLowerCase()}:${query}`
+        } else if (this.columnSelected.length <= 1) {
+          q = `${this.columnSelected[0].toLowerCase()}:${query}`
+        }
+        
+        this.$store.dispatch('alerts/updateQuery', { q })
         this.$router.push({
-          query: { ...this.$router.query, q: `${this.columnSelected.toLowerCase()}:${query}` },
+          query: { ...this.$router.query, q },
           hash: this.$store.getters['alerts/getHash']
         })
         this.refresh()
@@ -678,6 +691,9 @@ export default {
       }
     },
     queryByColumn() {
+      if (this.columnSelected.length <= 0) {
+        this.columnSelected = ['text']
+      }
       this.submitSearch(this.query)
     },
     clearSearch() {
